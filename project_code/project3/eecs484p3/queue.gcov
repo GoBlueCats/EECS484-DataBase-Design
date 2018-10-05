@@ -1,0 +1,722 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/queue
+        -:    0:Graph:LogMgr.gcno
+        -:    0:Data:LogMgr.gcda
+        -:    0:Runs:6
+        -:    0:Programs:1
+        -:    1:// -*- C++ -*-
+        -:    2://===--------------------------- queue ------------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_QUEUE
+        -:   12:#define _LIBCPP_QUEUE
+        -:   13:
+        -:   14:/*
+        -:   15:    queue synopsis
+        -:   16:
+        -:   17:namespace std
+        -:   18:{
+        -:   19:
+        -:   20:template <class T, class Container = deque<T>>
+        -:   21:class queue
+        -:   22:{
+        -:   23:public:
+        -:   24:    typedef Container                                container_type;
+        -:   25:    typedef typename container_type::value_type      value_type;
+        -:   26:    typedef typename container_type::reference       reference;
+        -:   27:    typedef typename container_type::const_reference const_reference;
+        -:   28:    typedef typename container_type::size_type       size_type;
+        -:   29:
+        -:   30:protected:
+        -:   31:    container_type c;
+        -:   32:
+        -:   33:public:
+        -:   34:    queue() = default;
+        -:   35:    ~queue() = default;
+        -:   36:
+        -:   37:    queue(const queue& q) = default;
+        -:   38:    queue(queue&& q) = default;
+        -:   39:
+        -:   40:    queue& operator=(const queue& q) = default;
+        -:   41:    queue& operator=(queue&& q) = default;
+        -:   42:
+        -:   43:    explicit queue(const container_type& c);
+        -:   44:    explicit queue(container_type&& c)
+        -:   45:    template <class Alloc>
+        -:   46:        explicit queue(const Alloc& a);
+        -:   47:    template <class Alloc>
+        -:   48:        queue(const container_type& c, const Alloc& a);
+        -:   49:    template <class Alloc>
+        -:   50:        queue(container_type&& c, const Alloc& a);
+        -:   51:    template <class Alloc>
+        -:   52:        queue(const queue& q, const Alloc& a);
+        -:   53:    template <class Alloc>
+        -:   54:        queue(queue&& q, const Alloc& a);
+        -:   55:
+        -:   56:    bool      empty() const;
+        -:   57:    size_type size() const;
+        -:   58:
+        -:   59:    reference       front();
+        -:   60:    const_reference front() const;
+        -:   61:    reference       back();
+        -:   62:    const_reference back() const;
+        -:   63:
+        -:   64:    void push(const value_type& v);
+        -:   65:    void push(value_type&& v);
+        -:   66:    template <class... Args> void emplace(Args&&... args);
+        -:   67:    void pop();
+        -:   68:
+        -:   69:    void swap(queue& q) noexcept(noexcept(swap(c, q.c)));
+        -:   70:};
+        -:   71:
+        -:   72:template <class T, class Container>
+        -:   73:  bool operator==(const queue<T, Container>& x,const queue<T, Container>& y);
+        -:   74:
+        -:   75:template <class T, class Container>
+        -:   76:  bool operator< (const queue<T, Container>& x,const queue<T, Container>& y);
+        -:   77:
+        -:   78:template <class T, class Container>
+        -:   79:  bool operator!=(const queue<T, Container>& x,const queue<T, Container>& y);
+        -:   80:
+        -:   81:template <class T, class Container>
+        -:   82:  bool operator> (const queue<T, Container>& x,const queue<T, Container>& y);
+        -:   83:
+        -:   84:template <class T, class Container>
+        -:   85:  bool operator>=(const queue<T, Container>& x,const queue<T, Container>& y);
+        -:   86:
+        -:   87:template <class T, class Container>
+        -:   88:  bool operator<=(const queue<T, Container>& x,const queue<T, Container>& y);
+        -:   89:
+        -:   90:template <class T, class Container>
+        -:   91:  void swap(queue<T, Container>& x, queue<T, Container>& y)
+        -:   92:  noexcept(noexcept(x.swap(y)));
+        -:   93:
+        -:   94:template <class T, class Container = vector<T>,
+        -:   95:          class Compare = less<typename Container::value_type>>
+        -:   96:class priority_queue
+        -:   97:{
+        -:   98:public:
+        -:   99:    typedef Container                                container_type;
+        -:  100:    typedef typename container_type::value_type      value_type;
+        -:  101:    typedef typename container_type::reference       reference;
+        -:  102:    typedef typename container_type::const_reference const_reference;
+        -:  103:    typedef typename container_type::size_type       size_type;
+        -:  104:
+        -:  105:protected:
+        -:  106:    container_type c;
+        -:  107:    Compare comp;
+        -:  108:
+        -:  109:public:
+        -:  110:    priority_queue() = default;
+        -:  111:    ~priority_queue() = default;
+        -:  112:
+        -:  113:    priority_queue(const priority_queue& q) = default;
+        -:  114:    priority_queue(priority_queue&& q) = default;
+        -:  115:
+        -:  116:    priority_queue& operator=(const priority_queue& q) = default;
+        -:  117:    priority_queue& operator=(priority_queue&& q) = default;
+        -:  118:
+        -:  119:    explicit priority_queue(const Compare& comp);
+        -:  120:    priority_queue(const Compare& comp, const container_type& c);
+        -:  121:    explicit priority_queue(const Compare& comp, container_type&& c);
+        -:  122:    template <class InputIterator>
+        -:  123:        priority_queue(InputIterator first, InputIterator last,
+        -:  124:                       const Compare& comp = Compare());
+        -:  125:    template <class InputIterator>
+        -:  126:        priority_queue(InputIterator first, InputIterator last,
+        -:  127:                       const Compare& comp, const container_type& c);
+        -:  128:    template <class InputIterator>
+        -:  129:        priority_queue(InputIterator first, InputIterator last,
+        -:  130:                       const Compare& comp, container_type&& c);
+        -:  131:    template <class Alloc>
+        -:  132:        explicit priority_queue(const Alloc& a);
+        -:  133:    template <class Alloc>
+        -:  134:        priority_queue(const Compare& comp, const Alloc& a);
+        -:  135:    template <class Alloc>
+        -:  136:        priority_queue(const Compare& comp, const container_type& c,
+        -:  137:                       const Alloc& a);
+        -:  138:    template <class Alloc>
+        -:  139:        priority_queue(const Compare& comp, container_type&& c,
+        -:  140:                       const Alloc& a);
+        -:  141:    template <class Alloc>
+        -:  142:        priority_queue(const priority_queue& q, const Alloc& a);
+        -:  143:    template <class Alloc>
+        -:  144:        priority_queue(priority_queue&& q, const Alloc& a);
+        -:  145:
+        -:  146:    bool            empty() const;
+        -:  147:    size_type       size() const;
+        -:  148:    const_reference top() const;
+        -:  149:
+        -:  150:    void push(const value_type& v);
+        -:  151:    void push(value_type&& v);
+        -:  152:    template <class... Args> void emplace(Args&&... args);
+        -:  153:    void pop();
+        -:  154:
+        -:  155:    void swap(priority_queue& q)
+        -:  156:        noexcept(noexcept(swap(c, q.c)) && noexcept(swap(comp.q.comp)));
+        -:  157:};
+        -:  158:
+        -:  159:template <class T, class Container, class Compare>
+        -:  160:  void swap(priority_queue<T, Container, Compare>& x,
+        -:  161:            priority_queue<T, Container, Compare>& y)
+        -:  162:            noexcept(noexcept(x.swap(y)));
+        -:  163:
+        -:  164:}  // std
+        -:  165:
+        -:  166:*/
+        -:  167:
+        -:  168:#include <__config>
+        -:  169:#include <deque>
+        -:  170:#include <vector>
+        -:  171:#include <functional>
+        -:  172:#include <algorithm>
+        -:  173:
+        -:  174:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:  175:#pragma GCC system_header
+        -:  176:#endif
+        -:  177:
+        -:  178:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:  179:
+        -:  180:template <class _Tp, class _Container = deque<_Tp> > class _LIBCPP_TYPE_VIS_ONLY queue;
+        -:  181:
+        -:  182:template <class _Tp, class _Container>
+        -:  183:_LIBCPP_INLINE_VISIBILITY
+        -:  184:bool
+        -:  185:operator==(const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y);
+        -:  186:
+        -:  187:template <class _Tp, class _Container>
+        -:  188:_LIBCPP_INLINE_VISIBILITY
+        -:  189:bool
+        -:  190:operator< (const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y);
+        -:  191:
+        -:  192:template <class _Tp, class _Container /*= deque<_Tp>*/>
+        -:  193:class _LIBCPP_TYPE_VIS_ONLY queue
+        -:  194:{
+        -:  195:public:
+        -:  196:    typedef _Container                               container_type;
+        -:  197:    typedef typename container_type::value_type      value_type;
+        -:  198:    typedef typename container_type::reference       reference;
+        -:  199:    typedef typename container_type::const_reference const_reference;
+        -:  200:    typedef typename container_type::size_type       size_type;
+        -:  201:
+        -:  202:protected:
+        -:  203:    container_type c;
+        -:  204:
+        -:  205:public:
+        -:  206:    _LIBCPP_INLINE_VISIBILITY
+        -:  207:    queue()
+        -:  208:        _NOEXCEPT_(is_nothrow_default_constructible<container_type>::value)
+        -:  209:        : c() {}
+        -:  210:
+        -:  211:    _LIBCPP_INLINE_VISIBILITY
+        -:  212:    queue(const queue& __q) : c(__q.c) {}
+        -:  213:
+        -:  214:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  215:    _LIBCPP_INLINE_VISIBILITY
+        -:  216:    queue(queue&& __q)
+        -:  217:        _NOEXCEPT_(is_nothrow_move_constructible<container_type>::value)
+        -:  218:        : c(_VSTD::move(__q.c)) {}
+        -:  219:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  220:
+        -:  221:    _LIBCPP_INLINE_VISIBILITY
+        -:  222:    queue& operator=(const queue& __q) {c = __q.c; return *this;}
+        -:  223:
+        -:  224:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  225:    _LIBCPP_INLINE_VISIBILITY
+        -:  226:    queue& operator=(queue&& __q)
+        -:  227:        _NOEXCEPT_(is_nothrow_move_assignable<container_type>::value)
+        -:  228:        {c = _VSTD::move(__q.c); return *this;}
+        -:  229:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  230:
+        -:  231:    _LIBCPP_INLINE_VISIBILITY
+        -:  232:    explicit queue(const container_type& __c)  : c(__c) {}
+        -:  233:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  234:    _LIBCPP_INLINE_VISIBILITY
+        -:  235:    explicit queue(container_type&& __c) : c(_VSTD::move(__c)) {}
+        -:  236:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  237:    template <class _Alloc>
+        -:  238:        _LIBCPP_INLINE_VISIBILITY
+        -:  239:        explicit queue(const _Alloc& __a,
+        -:  240:                       typename enable_if<uses_allocator<container_type,
+        -:  241:                                                         _Alloc>::value>::type* = 0)
+        -:  242:            : c(__a) {}
+        -:  243:    template <class _Alloc>
+        -:  244:        _LIBCPP_INLINE_VISIBILITY
+        -:  245:        queue(const queue& __q, const _Alloc& __a,
+        -:  246:                       typename enable_if<uses_allocator<container_type,
+        -:  247:                                                         _Alloc>::value>::type* = 0)
+        -:  248:            : c(__q.c, __a) {}
+        -:  249:    template <class _Alloc>
+        -:  250:        _LIBCPP_INLINE_VISIBILITY
+        -:  251:        queue(const container_type& __c, const _Alloc& __a,
+        -:  252:                       typename enable_if<uses_allocator<container_type,
+        -:  253:                                                         _Alloc>::value>::type* = 0)
+        -:  254:            : c(__c, __a) {}
+        -:  255:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  256:    template <class _Alloc>
+        -:  257:        _LIBCPP_INLINE_VISIBILITY
+        -:  258:        queue(container_type&& __c, const _Alloc& __a,
+        -:  259:                       typename enable_if<uses_allocator<container_type,
+        -:  260:                                                         _Alloc>::value>::type* = 0)
+        -:  261:            : c(_VSTD::move(__c), __a) {}
+        -:  262:    template <class _Alloc>
+        -:  263:        _LIBCPP_INLINE_VISIBILITY
+        -:  264:        queue(queue&& __q, const _Alloc& __a,
+        -:  265:                       typename enable_if<uses_allocator<container_type,
+        -:  266:                                                         _Alloc>::value>::type* = 0)
+        -:  267:            : c(_VSTD::move(__q.c), __a) {}
+        -:  268:
+        -:  269:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  270:
+        -:  271:    _LIBCPP_INLINE_VISIBILITY
+        -:  272:    bool      empty() const {return c.empty();}
+        -:  273:    _LIBCPP_INLINE_VISIBILITY
+        -:  274:    size_type size() const  {return c.size();}
+        -:  275:
+        -:  276:    _LIBCPP_INLINE_VISIBILITY
+        -:  277:    reference       front()       {return c.front();}
+        -:  278:    _LIBCPP_INLINE_VISIBILITY
+        -:  279:    const_reference front() const {return c.front();}
+        -:  280:    _LIBCPP_INLINE_VISIBILITY
+        -:  281:    reference       back()        {return c.back();}
+        -:  282:    _LIBCPP_INLINE_VISIBILITY
+        -:  283:    const_reference back() const  {return c.back();}
+        -:  284:
+        -:  285:    _LIBCPP_INLINE_VISIBILITY
+        -:  286:    void push(const value_type& __v) {c.push_back(__v);}
+        -:  287:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  288:    _LIBCPP_INLINE_VISIBILITY
+        -:  289:    void push(value_type&& __v)      {c.push_back(_VSTD::move(__v));}
+        -:  290:#ifndef _LIBCPP_HAS_NO_VARIADICS
+        -:  291:    template <class... _Args>
+        -:  292:        _LIBCPP_INLINE_VISIBILITY
+        -:  293:        void emplace(_Args&&... __args)
+        -:  294:            {c.emplace_back(_VSTD::forward<_Args>(__args)...);}
+        -:  295:#endif  // _LIBCPP_HAS_NO_VARIADICS
+        -:  296:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  297:    _LIBCPP_INLINE_VISIBILITY
+        -:  298:    void pop() {c.pop_front();}
+        -:  299:
+        -:  300:    _LIBCPP_INLINE_VISIBILITY
+        -:  301:    void swap(queue& __q)
+        -:  302:        _NOEXCEPT_(__is_nothrow_swappable<container_type>::value)
+        -:  303:    {
+        -:  304:        using _VSTD::swap;
+        -:  305:        swap(c, __q.c);
+        -:  306:    }
+        -:  307:
+        -:  308:    template <class _T1, class _C1>
+        -:  309:    friend
+        -:  310:    _LIBCPP_INLINE_VISIBILITY
+        -:  311:    bool
+        -:  312:    operator==(const queue<_T1, _C1>& __x,const queue<_T1, _C1>& __y);
+        -:  313:
+        -:  314:    template <class _T1, class _C1>
+        -:  315:    friend
+        -:  316:    _LIBCPP_INLINE_VISIBILITY
+        -:  317:    bool
+        -:  318:    operator< (const queue<_T1, _C1>& __x,const queue<_T1, _C1>& __y);
+        -:  319:};
+        -:  320:
+        -:  321:template <class _Tp, class _Container>
+        -:  322:inline _LIBCPP_INLINE_VISIBILITY
+        -:  323:bool
+        -:  324:operator==(const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y)
+        -:  325:{
+        -:  326:    return __x.c == __y.c;
+        -:  327:}
+        -:  328:
+        -:  329:template <class _Tp, class _Container>
+        -:  330:inline _LIBCPP_INLINE_VISIBILITY
+        -:  331:bool
+        -:  332:operator< (const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y)
+        -:  333:{
+        -:  334:    return __x.c < __y.c;
+        -:  335:}
+        -:  336:
+        -:  337:template <class _Tp, class _Container>
+        -:  338:inline _LIBCPP_INLINE_VISIBILITY
+        -:  339:bool
+        -:  340:operator!=(const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y)
+        -:  341:{
+        -:  342:    return !(__x == __y);
+        -:  343:}
+        -:  344:
+        -:  345:template <class _Tp, class _Container>
+        -:  346:inline _LIBCPP_INLINE_VISIBILITY
+        -:  347:bool
+        -:  348:operator> (const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y)
+        -:  349:{
+        -:  350:    return __y < __x;
+        -:  351:}
+        -:  352:
+        -:  353:template <class _Tp, class _Container>
+        -:  354:inline _LIBCPP_INLINE_VISIBILITY
+        -:  355:bool
+        -:  356:operator>=(const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y)
+        -:  357:{
+        -:  358:    return !(__x < __y);
+        -:  359:}
+        -:  360:
+        -:  361:template <class _Tp, class _Container>
+        -:  362:inline _LIBCPP_INLINE_VISIBILITY
+        -:  363:bool
+        -:  364:operator<=(const queue<_Tp, _Container>& __x,const queue<_Tp, _Container>& __y)
+        -:  365:{
+        -:  366:    return !(__y < __x);
+        -:  367:}
+        -:  368:
+        -:  369:template <class _Tp, class _Container>
+        -:  370:inline _LIBCPP_INLINE_VISIBILITY
+        -:  371:void
+        -:  372:swap(queue<_Tp, _Container>& __x, queue<_Tp, _Container>& __y)
+        -:  373:    _NOEXCEPT_(_NOEXCEPT_(__x.swap(__y)))
+        -:  374:{
+        -:  375:    __x.swap(__y);
+        -:  376:}
+        -:  377:
+        -:  378:template <class _Tp, class _Container, class _Alloc>
+        -:  379:struct _LIBCPP_TYPE_VIS_ONLY uses_allocator<queue<_Tp, _Container>, _Alloc>
+        -:  380:    : public uses_allocator<_Container, _Alloc>
+        -:  381:{
+        -:  382:};
+        -:  383:
+        -:  384:template <class _Tp, class _Container = vector<_Tp>,
+        -:  385:          class _Compare = less<typename _Container::value_type> >
+        8:  386:class _LIBCPP_TYPE_VIS_ONLY priority_queue
+        -:  387:{
+        -:  388:public:
+        -:  389:    typedef _Container                               container_type;
+        -:  390:    typedef _Compare                                 value_compare;
+        -:  391:    typedef typename container_type::value_type      value_type;
+        -:  392:    typedef typename container_type::reference       reference;
+        -:  393:    typedef typename container_type::const_reference const_reference;
+        -:  394:    typedef typename container_type::size_type       size_type;
+        -:  395:
+        -:  396:protected:
+        -:  397:    container_type c;
+        -:  398:    value_compare comp;
+        -:  399:
+        -:  400:public:
+        -:  401:    _LIBCPP_INLINE_VISIBILITY
+        -:  402:    priority_queue()
+        -:  403:        _NOEXCEPT_(is_nothrow_default_constructible<container_type>::value &&
+        -:  404:                   is_nothrow_default_constructible<value_compare>::value)
+        8:  405:        : c(), comp() {}
+        -:  406:
+        -:  407:    _LIBCPP_INLINE_VISIBILITY
+        -:  408:    priority_queue(const priority_queue& __q) : c(__q.c), comp(__q.comp) {}
+        -:  409:
+        -:  410:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  411:    _LIBCPP_INLINE_VISIBILITY
+        -:  412:    priority_queue(priority_queue&& __q)
+        -:  413:        _NOEXCEPT_(is_nothrow_move_constructible<container_type>::value &&
+        -:  414:                   is_nothrow_move_constructible<value_compare>::value)
+        -:  415:        : c(_VSTD::move(__q.c)), comp(_VSTD::move(__q.comp)) {}
+        -:  416:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  417:
+        -:  418:    _LIBCPP_INLINE_VISIBILITY
+        -:  419:    priority_queue& operator=(const priority_queue& __q)
+        -:  420:        {c = __q.c; comp = __q.comp; return *this;}
+        -:  421:
+        -:  422:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  423:    _LIBCPP_INLINE_VISIBILITY
+        -:  424:    priority_queue& operator=(priority_queue&& __q)
+        -:  425:        _NOEXCEPT_(is_nothrow_move_assignable<container_type>::value &&
+        -:  426:                   is_nothrow_move_assignable<value_compare>::value)
+        -:  427:        {c = _VSTD::move(__q.c); comp = _VSTD::move(__q.comp); return *this;}
+        -:  428:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  429:
+        -:  430:    _LIBCPP_INLINE_VISIBILITY
+        -:  431:    explicit priority_queue(const value_compare& __comp)
+        -:  432:        : c(), comp(__comp) {}
+        -:  433:    priority_queue(const value_compare& __comp, const container_type& __c);
+        -:  434:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  435:    explicit priority_queue(const value_compare& __comp, container_type&& __c);
+        -:  436:#endif
+        -:  437:    template <class _InputIter>
+        -:  438:        priority_queue(_InputIter __f, _InputIter __l,
+        -:  439:                       const value_compare& __comp = value_compare());
+        -:  440:    template <class _InputIter>
+        -:  441:        priority_queue(_InputIter __f, _InputIter __l,
+        -:  442:                       const value_compare& __comp, const container_type& __c);
+        -:  443:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  444:    template <class _InputIter>
+        -:  445:        priority_queue(_InputIter __f, _InputIter __l,
+        -:  446:                       const value_compare& __comp, container_type&& __c);
+        -:  447:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  448:    template <class _Alloc>
+        -:  449:        explicit priority_queue(const _Alloc& __a,
+        -:  450:                       typename enable_if<uses_allocator<container_type,
+        -:  451:                                                         _Alloc>::value>::type* = 0);
+        -:  452:    template <class _Alloc>
+        -:  453:        priority_queue(const value_compare& __comp, const _Alloc& __a,
+        -:  454:                       typename enable_if<uses_allocator<container_type,
+        -:  455:                                                         _Alloc>::value>::type* = 0);
+        -:  456:    template <class _Alloc>
+        -:  457:        priority_queue(const value_compare& __comp, const container_type& __c,
+        -:  458:                       const _Alloc& __a,
+        -:  459:                       typename enable_if<uses_allocator<container_type,
+        -:  460:                                                         _Alloc>::value>::type* = 0);
+        -:  461:    template <class _Alloc>
+        -:  462:        priority_queue(const priority_queue& __q, const _Alloc& __a,
+        -:  463:                       typename enable_if<uses_allocator<container_type,
+        -:  464:                                                         _Alloc>::value>::type* = 0);
+        -:  465:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  466:    template <class _Alloc>
+        -:  467:        priority_queue(const value_compare& __comp, container_type&& __c,
+        -:  468:                       const _Alloc& __a,
+        -:  469:                       typename enable_if<uses_allocator<container_type,
+        -:  470:                                                         _Alloc>::value>::type* = 0);
+        -:  471:    template <class _Alloc>
+        -:  472:        priority_queue(priority_queue&& __q, const _Alloc& __a,
+        -:  473:                       typename enable_if<uses_allocator<container_type,
+        -:  474:                                                         _Alloc>::value>::type* = 0);
+        -:  475:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  476:
+        -:  477:    _LIBCPP_INLINE_VISIBILITY
+       10:  478:    bool            empty() const {return c.empty();}
+        -:  479:    _LIBCPP_INLINE_VISIBILITY
+        -:  480:    size_type       size() const  {return c.size();}
+        -:  481:    _LIBCPP_INLINE_VISIBILITY
+        6:  482:    const_reference top() const   {return c.front();}
+        -:  483:
+        -:  484:    void push(const value_type& __v);
+        -:  485:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  486:    void push(value_type&& __v);
+        -:  487:#ifndef _LIBCPP_HAS_NO_VARIADICS
+        -:  488:    template <class... _Args> void emplace(_Args&&... __args);
+        -:  489:#endif
+        -:  490:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  491:    void pop();
+        -:  492:
+        -:  493:    void swap(priority_queue& __q)
+        -:  494:        _NOEXCEPT_(__is_nothrow_swappable<container_type>::value &&
+        -:  495:                   __is_nothrow_swappable<value_compare>::value);
+        -:  496:};
+        -:  497:
+        -:  498:template <class _Tp, class _Container, class _Compare>
+        -:  499:inline _LIBCPP_INLINE_VISIBILITY
+        -:  500:priority_queue<_Tp, _Container, _Compare>::priority_queue(const _Compare& __comp,
+        -:  501:                                                          const container_type& __c)
+        -:  502:    : c(__c),
+        -:  503:      comp(__comp)
+        -:  504:{
+        -:  505:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  506:}
+        -:  507:
+        -:  508:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  509:
+        -:  510:template <class _Tp, class _Container, class _Compare>
+        -:  511:inline _LIBCPP_INLINE_VISIBILITY
+        -:  512:priority_queue<_Tp, _Container, _Compare>::priority_queue(const value_compare& __comp,
+        -:  513:                                                          container_type&& __c)
+        -:  514:    : c(_VSTD::move(__c)),
+        -:  515:      comp(__comp)
+        -:  516:{
+        -:  517:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  518:}
+        -:  519:
+        -:  520:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  521:
+        -:  522:template <class _Tp, class _Container, class _Compare>
+        -:  523:template <class _InputIter>
+        -:  524:inline _LIBCPP_INLINE_VISIBILITY
+        -:  525:priority_queue<_Tp, _Container, _Compare>::priority_queue(_InputIter __f, _InputIter __l,
+        -:  526:                                                          const value_compare& __comp)
+        -:  527:    : c(__f, __l),
+        -:  528:      comp(__comp)
+        -:  529:{
+        -:  530:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  531:}
+        -:  532:
+        -:  533:template <class _Tp, class _Container, class _Compare>
+        -:  534:template <class _InputIter>
+        -:  535:inline _LIBCPP_INLINE_VISIBILITY
+        -:  536:priority_queue<_Tp, _Container, _Compare>::priority_queue(_InputIter __f, _InputIter __l,
+        -:  537:                                                          const value_compare& __comp,
+        -:  538:                                                          const container_type& __c)
+        -:  539:    : c(__c),
+        -:  540:      comp(__comp)
+        -:  541:{
+        -:  542:    c.insert(c.end(), __f, __l);
+        -:  543:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  544:}
+        -:  545:
+        -:  546:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  547:
+        -:  548:template <class _Tp, class _Container, class _Compare>
+        -:  549:template <class _InputIter>
+        -:  550:inline _LIBCPP_INLINE_VISIBILITY
+        -:  551:priority_queue<_Tp, _Container, _Compare>::priority_queue(_InputIter __f, _InputIter __l,
+        -:  552:                                                          const value_compare& __comp,
+        -:  553:                                                          container_type&& __c)
+        -:  554:    : c(_VSTD::move(__c)),
+        -:  555:      comp(__comp)
+        -:  556:{
+        -:  557:    c.insert(c.end(), __f, __l);
+        -:  558:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  559:}
+        -:  560:
+        -:  561:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  562:
+        -:  563:template <class _Tp, class _Container, class _Compare>
+        -:  564:template <class _Alloc>
+        -:  565:inline _LIBCPP_INLINE_VISIBILITY
+        -:  566:priority_queue<_Tp, _Container, _Compare>::priority_queue(const _Alloc& __a,
+        -:  567:                       typename enable_if<uses_allocator<container_type,
+        -:  568:                                                         _Alloc>::value>::type*)
+        -:  569:    : c(__a)
+        -:  570:{
+        -:  571:}
+        -:  572:
+        -:  573:template <class _Tp, class _Container, class _Compare>
+        -:  574:template <class _Alloc>
+        -:  575:inline _LIBCPP_INLINE_VISIBILITY
+        -:  576:priority_queue<_Tp, _Container, _Compare>::priority_queue(const value_compare& __comp,
+        -:  577:                                                          const _Alloc& __a,
+        -:  578:                       typename enable_if<uses_allocator<container_type,
+        -:  579:                                                         _Alloc>::value>::type*)
+        -:  580:    : c(__a),
+        -:  581:      comp(__comp)
+        -:  582:{
+        -:  583:}
+        -:  584:
+        -:  585:template <class _Tp, class _Container, class _Compare>
+        -:  586:template <class _Alloc>
+        -:  587:inline _LIBCPP_INLINE_VISIBILITY
+        -:  588:priority_queue<_Tp, _Container, _Compare>::priority_queue(const value_compare& __comp,
+        -:  589:                                                          const container_type& __c,
+        -:  590:                                                          const _Alloc& __a,
+        -:  591:                       typename enable_if<uses_allocator<container_type,
+        -:  592:                                                         _Alloc>::value>::type*)
+        -:  593:    : c(__c, __a),
+        -:  594:      comp(__comp)
+        -:  595:{
+        -:  596:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  597:}
+        -:  598:
+        -:  599:template <class _Tp, class _Container, class _Compare>
+        -:  600:template <class _Alloc>
+        -:  601:inline _LIBCPP_INLINE_VISIBILITY
+        -:  602:priority_queue<_Tp, _Container, _Compare>::priority_queue(const priority_queue& __q,
+        -:  603:                                                          const _Alloc& __a,
+        -:  604:                       typename enable_if<uses_allocator<container_type,
+        -:  605:                                                         _Alloc>::value>::type*)
+        -:  606:    : c(__q.c, __a),
+        -:  607:      comp(__q.comp)
+        -:  608:{
+        -:  609:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  610:}
+        -:  611:
+        -:  612:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  613:
+        -:  614:template <class _Tp, class _Container, class _Compare>
+        -:  615:template <class _Alloc>
+        -:  616:inline _LIBCPP_INLINE_VISIBILITY
+        -:  617:priority_queue<_Tp, _Container, _Compare>::priority_queue(const value_compare& __comp,
+        -:  618:                                                          container_type&& __c,
+        -:  619:                                                          const _Alloc& __a,
+        -:  620:                       typename enable_if<uses_allocator<container_type,
+        -:  621:                                                         _Alloc>::value>::type*)
+        -:  622:    : c(_VSTD::move(__c), __a),
+        -:  623:      comp(__comp)
+        -:  624:{
+        -:  625:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  626:}
+        -:  627:
+        -:  628:template <class _Tp, class _Container, class _Compare>
+        -:  629:template <class _Alloc>
+        -:  630:inline _LIBCPP_INLINE_VISIBILITY
+        -:  631:priority_queue<_Tp, _Container, _Compare>::priority_queue(priority_queue&& __q,
+        -:  632:                                                          const _Alloc& __a,
+        -:  633:                       typename enable_if<uses_allocator<container_type,
+        -:  634:                                                         _Alloc>::value>::type*)
+        -:  635:    : c(_VSTD::move(__q.c), __a),
+        -:  636:      comp(_VSTD::move(__q.comp))
+        -:  637:{
+        -:  638:    _VSTD::make_heap(c.begin(), c.end(), comp);
+        -:  639:}
+        -:  640:
+        -:  641:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  642:
+        -:  643:template <class _Tp, class _Container, class _Compare>
+        -:  644:inline _LIBCPP_INLINE_VISIBILITY
+        -:  645:void
+        -:  646:priority_queue<_Tp, _Container, _Compare>::push(const value_type& __v)
+        -:  647:{
+        4:  648:    c.push_back(__v);
+        4:  649:    _VSTD::push_heap(c.begin(), c.end(), comp);
+        4:  650:}
+        -:  651:
+        -:  652:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  653:
+        -:  654:template <class _Tp, class _Container, class _Compare>
+        -:  655:inline _LIBCPP_INLINE_VISIBILITY
+        -:  656:void
+        -:  657:priority_queue<_Tp, _Container, _Compare>::push(value_type&& __v)
+        -:  658:{
+        2:  659:    c.push_back(_VSTD::move(__v));
+        2:  660:    _VSTD::push_heap(c.begin(), c.end(), comp);
+        2:  661:}
+        -:  662:
+        -:  663:#ifndef _LIBCPP_HAS_NO_VARIADICS
+        -:  664:
+        -:  665:template <class _Tp, class _Container, class _Compare>
+        -:  666:template <class... _Args>
+        -:  667:inline _LIBCPP_INLINE_VISIBILITY
+        -:  668:void
+        -:  669:priority_queue<_Tp, _Container, _Compare>::emplace(_Args&&... __args)
+        -:  670:{
+        -:  671:    c.emplace_back(_VSTD::forward<_Args>(__args)...);
+        -:  672:    _VSTD::push_heap(c.begin(), c.end(), comp);
+        -:  673:}
+        -:  674:
+        -:  675:#endif  // _LIBCPP_HAS_NO_VARIADICS
+        -:  676:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  677:
+        -:  678:template <class _Tp, class _Container, class _Compare>
+        -:  679:inline _LIBCPP_INLINE_VISIBILITY
+        -:  680:void
+        -:  681:priority_queue<_Tp, _Container, _Compare>::pop()
+        -:  682:{
+        6:  683:    _VSTD::pop_heap(c.begin(), c.end(), comp);
+        6:  684:    c.pop_back();
+        6:  685:}
+        -:  686:
+        -:  687:template <class _Tp, class _Container, class _Compare>
+        -:  688:inline _LIBCPP_INLINE_VISIBILITY
+        -:  689:void
+        -:  690:priority_queue<_Tp, _Container, _Compare>::swap(priority_queue& __q)
+        -:  691:        _NOEXCEPT_(__is_nothrow_swappable<container_type>::value &&
+        -:  692:                   __is_nothrow_swappable<value_compare>::value)
+        -:  693:{
+        -:  694:    using _VSTD::swap;
+        -:  695:    swap(c, __q.c);
+        -:  696:    swap(comp, __q.comp);
+        -:  697:}
+        -:  698:
+        -:  699:template <class _Tp, class _Container, class _Compare>
+        -:  700:inline _LIBCPP_INLINE_VISIBILITY
+        -:  701:void
+        -:  702:swap(priority_queue<_Tp, _Container, _Compare>& __x,
+        -:  703:     priority_queue<_Tp, _Container, _Compare>& __y)
+        -:  704:    _NOEXCEPT_(_NOEXCEPT_(__x.swap(__y)))
+        -:  705:{
+        -:  706:    __x.swap(__y);
+        -:  707:}
+        -:  708:
+        -:  709:template <class _Tp, class _Container, class _Compare, class _Alloc>
+        -:  710:struct _LIBCPP_TYPE_VIS_ONLY uses_allocator<priority_queue<_Tp, _Container, _Compare>, _Alloc>
+        -:  711:    : public uses_allocator<_Container, _Alloc>
+        -:  712:{
+        -:  713:};
+        -:  714:
+        -:  715:_LIBCPP_END_NAMESPACE_STD
+        -:  716:
+        -:  717:#endif  // _LIBCPP_QUEUE

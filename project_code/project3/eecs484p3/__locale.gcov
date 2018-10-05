@@ -1,0 +1,1480 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__locale
+        -:    0:Graph:LogMgr.gcno
+        -:    0:Data:LogMgr.gcda
+        -:    0:Runs:6
+        -:    0:Programs:1
+        -:    1:// -*- C++ -*-
+        -:    2://===----------------------------------------------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP___LOCALE
+        -:   12:#define _LIBCPP___LOCALE
+        -:   13:
+        -:   14:#include <__config>
+        -:   15:#include <string>
+        -:   16:#include <memory>
+        -:   17:#include <utility>
+        -:   18:#include <mutex>
+        -:   19:#include <cstdint>
+        -:   20:#include <cctype>
+        -:   21:#include <locale.h>
+        -:   22:#if defined(_LIBCPP_MSVCRT) || defined(__MINGW32__)
+        -:   23:# include <support/win32/locale_win32.h>
+        -:   24:#elif defined(_AIX)
+        -:   25:# include <support/ibm/xlocale.h>
+        -:   26:#elif defined(__ANDROID__)
+        -:   27:// Android gained the locale aware functions in L (API level 21)
+        -:   28:# include <android/api-level.h>
+        -:   29:# if __ANDROID_API__ <= 20
+        -:   30:#  include <support/android/locale_bionic.h>
+        -:   31:# endif
+        -:   32:#elif defined(__sun__)
+        -:   33:# include <xlocale.h>
+        -:   34:# include <support/solaris/xlocale.h>
+        -:   35:#elif defined(_NEWLIB_VERSION)
+        -:   36:# include <support/newlib/xlocale.h>
+        -:   37:#elif (defined(__GLIBC__) || defined(__APPLE__)      || defined(__FreeBSD__) \
+        -:   38:    || defined(__EMSCRIPTEN__) || defined(__IBMCPP__))
+        -:   39:# include <xlocale.h>
+        -:   40:#endif // __GLIBC__ || __APPLE__ || __FreeBSD__ || __sun__ || __EMSCRIPTEN__ || __IBMCPP__
+        -:   41:
+        -:   42:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:   43:#pragma GCC system_header
+        -:   44:#endif
+        -:   45:
+        -:   46:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:   47:
+        -:   48:class _LIBCPP_TYPE_VIS locale;
+        -:   49:
+        -:   50:template <class _Facet>
+        -:   51:_LIBCPP_INLINE_VISIBILITY
+        -:   52:bool
+        -:   53:has_facet(const locale&) _NOEXCEPT;
+        -:   54:
+        -:   55:template <class _Facet>
+        -:   56:_LIBCPP_INLINE_VISIBILITY
+        -:   57:const _Facet&
+        -:   58:use_facet(const locale&);
+        -:   59:
+        -:   60:class _LIBCPP_TYPE_VIS locale
+        -:   61:{
+        -:   62:public:
+        -:   63:    // types:
+        -:   64:    class _LIBCPP_TYPE_VIS facet;
+        -:   65:    class _LIBCPP_TYPE_VIS id;
+        -:   66:
+        -:   67:    typedef int category;
+        -:   68:    static const category // values assigned here are for exposition only
+        -:   69:        none     = 0,
+        -:   70:        collate  = LC_COLLATE_MASK,
+        -:   71:        ctype    = LC_CTYPE_MASK,
+        -:   72:        monetary = LC_MONETARY_MASK,
+        -:   73:        numeric  = LC_NUMERIC_MASK,
+        -:   74:        time     = LC_TIME_MASK,
+        -:   75:        messages = LC_MESSAGES_MASK,
+        -:   76:        all = collate | ctype | monetary | numeric | time | messages;
+        -:   77:
+        -:   78:    // construct/copy/destroy:
+        -:   79:    locale()  _NOEXCEPT;
+        -:   80:    locale(const locale&)  _NOEXCEPT;
+        -:   81:    explicit locale(const char*);
+        -:   82:    explicit locale(const string&);
+        -:   83:    locale(const locale&, const char*, category);
+        -:   84:    locale(const locale&, const string&, category);
+        -:   85:    template <class _Facet>
+        -:   86:        _LIBCPP_INLINE_VISIBILITY locale(const locale&, _Facet*);
+        -:   87:    locale(const locale&, const locale&, category);
+        -:   88:
+        -:   89:    ~locale();
+        -:   90:
+        -:   91:    const locale& operator=(const locale&)  _NOEXCEPT;
+        -:   92:
+        -:   93:    template <class _Facet> locale combine(const locale&) const;
+        -:   94:
+        -:   95:    // locale operations:
+        -:   96:    string name() const;
+        -:   97:    bool operator==(const locale&) const;
+        -:   98:    bool operator!=(const locale& __y) const {return !(*this == __y);}
+        -:   99:    template <class _CharT, class _Traits, class _Allocator>
+        -:  100:      bool operator()(const basic_string<_CharT, _Traits, _Allocator>&,
+        -:  101:                      const basic_string<_CharT, _Traits, _Allocator>&) const;
+        -:  102:
+        -:  103:    // global locale objects:
+        -:  104:    static locale global(const locale&);
+        -:  105:    static const locale& classic();
+        -:  106:
+        -:  107:private:
+        -:  108:    class __imp;
+        -:  109:    __imp* __locale_;
+        -:  110:
+        -:  111:    void __install_ctor(const locale&, facet*, long);
+        -:  112:    static locale& __global();
+        -:  113:    bool has_facet(id&) const;
+        -:  114:    const facet* use_facet(id&) const;
+        -:  115:
+        -:  116:    template <class _Facet> friend bool has_facet(const locale&)  _NOEXCEPT;
+        -:  117:    template <class _Facet> friend const _Facet& use_facet(const locale&);
+        -:  118:};
+        -:  119:
+        -:  120:class _LIBCPP_TYPE_VIS locale::facet
+        -:  121:    : public __shared_count
+        -:  122:{
+        -:  123:protected:
+        -:  124:    _LIBCPP_INLINE_VISIBILITY
+        -:  125:    explicit facet(size_t __refs = 0)
+        -:  126:        : __shared_count(static_cast<long>(__refs)-1) {}
+        -:  127:
+        -:  128:    virtual ~facet();
+        -:  129:
+        -:  130://    facet(const facet&) = delete;     // effectively done in __shared_count
+        -:  131://    void operator=(const facet&) = delete;
+        -:  132:private:
+        -:  133:    virtual void __on_zero_shared() _NOEXCEPT;
+        -:  134:};
+        -:  135:
+        -:  136:class _LIBCPP_TYPE_VIS locale::id
+        -:  137:{
+        -:  138:    once_flag      __flag_;
+        -:  139:    int32_t        __id_;
+        -:  140:
+        -:  141:    static int32_t __next_id;
+        -:  142:public:
+        -:  143:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR id() :__id_(0) {}
+        -:  144:private:
+        -:  145:    void __init();
+        -:  146:    void operator=(const id&); // = delete;
+        -:  147:    id(const id&); // = delete;
+        -:  148:public:  // only needed for tests
+        -:  149:    long __get();
+        -:  150:
+        -:  151:    friend class locale;
+        -:  152:    friend class locale::__imp;
+        -:  153:};
+        -:  154:
+        -:  155:template <class _Facet>
+        -:  156:inline _LIBCPP_INLINE_VISIBILITY
+        -:  157:locale::locale(const locale& __other, _Facet* __f)
+        -:  158:{
+        -:  159:    __install_ctor(__other, __f, __f ? __f->id.__get() : 0);
+        -:  160:}
+        -:  161:
+        -:  162:template <class _Facet>
+        -:  163:locale
+        -:  164:locale::combine(const locale& __other) const
+        -:  165:{
+        -:  166:#ifndef _LIBCPP_NO_EXCEPTIONS
+        -:  167:    if (!_VSTD::has_facet<_Facet>(__other))
+        -:  168:        throw runtime_error("locale::combine: locale missing facet");
+        -:  169:#endif  // _LIBCPP_NO_EXCEPTIONS
+        -:  170:    return locale(*this, &const_cast<_Facet&>(_VSTD::use_facet<_Facet>(__other)));
+        -:  171:}
+        -:  172:
+        -:  173:template <class _Facet>
+        -:  174:inline _LIBCPP_INLINE_VISIBILITY
+        -:  175:bool
+        -:  176:has_facet(const locale& __l)  _NOEXCEPT
+        -:  177:{
+        -:  178:    return __l.has_facet(_Facet::id);
+        -:  179:}
+        -:  180:
+        -:  181:template <class _Facet>
+        -:  182:inline _LIBCPP_INLINE_VISIBILITY
+        -:  183:const _Facet&
+        -:  184:use_facet(const locale& __l)
+        -:  185:{
+      817:  186:    return static_cast<const _Facet&>(*__l.use_facet(_Facet::id));
+        -:  187:}
+        -:  188:
+        -:  189:// template <class _CharT> class collate;
+        -:  190:
+        -:  191:template <class _CharT>
+        -:  192:class _LIBCPP_TYPE_VIS_ONLY collate
+        -:  193:    : public locale::facet
+        -:  194:{
+        -:  195:public:
+        -:  196:    typedef _CharT char_type;
+        -:  197:    typedef basic_string<char_type> string_type;
+        -:  198:
+        -:  199:    _LIBCPP_INLINE_VISIBILITY
+        -:  200:    explicit collate(size_t __refs = 0)
+        -:  201:        : locale::facet(__refs) {}
+        -:  202:
+        -:  203:    _LIBCPP_INLINE_VISIBILITY
+        -:  204:    int compare(const char_type* __lo1, const char_type* __hi1,
+        -:  205:                const char_type* __lo2, const char_type* __hi2) const
+        -:  206:    {
+        -:  207:        return do_compare(__lo1, __hi1, __lo2, __hi2);
+        -:  208:    }
+        -:  209:
+        -:  210:    _LIBCPP_INLINE_VISIBILITY
+        -:  211:    string_type transform(const char_type* __lo, const char_type* __hi) const
+        -:  212:    {
+        -:  213:        return do_transform(__lo, __hi);
+        -:  214:    }
+        -:  215:
+        -:  216:    _LIBCPP_INLINE_VISIBILITY
+        -:  217:    long hash(const char_type* __lo, const char_type* __hi) const
+        -:  218:    {
+        -:  219:        return do_hash(__lo, __hi);
+        -:  220:    }
+        -:  221:
+        -:  222:    static locale::id id;
+        -:  223:
+        -:  224:protected:
+        -:  225:    ~collate();
+        -:  226:    virtual int do_compare(const char_type* __lo1, const char_type* __hi1,
+        -:  227:                           const char_type* __lo2, const char_type* __hi2) const;
+        -:  228:    virtual string_type do_transform(const char_type* __lo, const char_type* __hi) const
+        -:  229:        {return string_type(__lo, __hi);}
+        -:  230:    virtual long do_hash(const char_type* __lo, const char_type* __hi) const;
+        -:  231:};
+        -:  232:
+        -:  233:template <class _CharT> locale::id collate<_CharT>::id;
+        -:  234:
+        -:  235:template <class _CharT>
+        -:  236:collate<_CharT>::~collate()
+        -:  237:{
+        -:  238:}
+        -:  239:
+        -:  240:template <class _CharT>
+        -:  241:int
+        -:  242:collate<_CharT>::do_compare(const char_type* __lo1, const char_type* __hi1,
+        -:  243:                            const char_type* __lo2, const char_type* __hi2) const
+        -:  244:{
+        -:  245:    for (; __lo2 != __hi2; ++__lo1, ++__lo2)
+        -:  246:    {
+        -:  247:        if (__lo1 == __hi1 || *__lo1 < *__lo2)
+        -:  248:            return -1;
+        -:  249:        if (*__lo2 < *__lo1)
+        -:  250:            return 1;
+        -:  251:    }
+        -:  252:    return __lo1 != __hi1;
+        -:  253:}
+        -:  254:
+        -:  255:template <class _CharT>
+        -:  256:long
+        -:  257:collate<_CharT>::do_hash(const char_type* __lo, const char_type* __hi) const
+        -:  258:{
+        -:  259:    size_t __h = 0;
+        -:  260:    const size_t __sr = __CHAR_BIT__ * sizeof(size_t) - 8;
+        -:  261:    const size_t __mask = size_t(0xF) << (__sr + 4);
+        -:  262:    for(const char_type* __p = __lo; __p != __hi; ++__p)
+        -:  263:    {
+        -:  264:        __h = (__h << 4) + static_cast<size_t>(*__p);
+        -:  265:        size_t __g = __h & __mask;
+        -:  266:        __h ^= __g | (__g >> __sr);
+        -:  267:    }
+        -:  268:    return static_cast<long>(__h);
+        -:  269:}
+        -:  270:
+        -:  271:_LIBCPP_EXTERN_TEMPLATE2(class _LIBCPP_TYPE_VIS collate<char>)
+        -:  272:_LIBCPP_EXTERN_TEMPLATE2(class _LIBCPP_TYPE_VIS collate<wchar_t>)
+        -:  273:
+        -:  274:// template <class CharT> class collate_byname;
+        -:  275:
+        -:  276:template <class _CharT> class _LIBCPP_TYPE_VIS_ONLY collate_byname;
+        -:  277:
+        -:  278:template <>
+        -:  279:class _LIBCPP_TYPE_VIS collate_byname<char>
+        -:  280:    : public collate<char>
+        -:  281:{
+        -:  282:    locale_t __l;
+        -:  283:public:
+        -:  284:    typedef char char_type;
+        -:  285:    typedef basic_string<char_type> string_type;
+        -:  286:
+        -:  287:    explicit collate_byname(const char* __n, size_t __refs = 0);
+        -:  288:    explicit collate_byname(const string& __n, size_t __refs = 0);
+        -:  289:
+        -:  290:protected:
+        -:  291:    ~collate_byname();
+        -:  292:    virtual int do_compare(const char_type* __lo1, const char_type* __hi1,
+        -:  293:                           const char_type* __lo2, const char_type* __hi2) const;
+        -:  294:    virtual string_type do_transform(const char_type* __lo, const char_type* __hi) const;
+        -:  295:};
+        -:  296:
+        -:  297:template <>
+        -:  298:class _LIBCPP_TYPE_VIS collate_byname<wchar_t>
+        -:  299:    : public collate<wchar_t>
+        -:  300:{
+        -:  301:    locale_t __l;
+        -:  302:public:
+        -:  303:    typedef wchar_t char_type;
+        -:  304:    typedef basic_string<char_type> string_type;
+        -:  305:
+        -:  306:    explicit collate_byname(const char* __n, size_t __refs = 0);
+        -:  307:    explicit collate_byname(const string& __n, size_t __refs = 0);
+        -:  308:
+        -:  309:protected:
+        -:  310:    ~collate_byname();
+        -:  311:
+        -:  312:    virtual int do_compare(const char_type* __lo1, const char_type* __hi1,
+        -:  313:                           const char_type* __lo2, const char_type* __hi2) const;
+        -:  314:    virtual string_type do_transform(const char_type* __lo, const char_type* __hi) const;
+        -:  315:};
+        -:  316:
+        -:  317:template <class _CharT, class _Traits, class _Allocator>
+        -:  318:bool
+        -:  319:locale::operator()(const basic_string<_CharT, _Traits, _Allocator>& __x,
+        -:  320:                   const basic_string<_CharT, _Traits, _Allocator>& __y) const
+        -:  321:{
+        -:  322:    return _VSTD::use_facet<_VSTD::collate<_CharT> >(*this).compare(
+        -:  323:                                       __x.data(), __x.data() + __x.size(),
+        -:  324:                                       __y.data(), __y.data() + __y.size()) < 0;
+        -:  325:}
+        -:  326:
+        -:  327:// template <class charT> class ctype
+        -:  328:
+        -:  329:class _LIBCPP_TYPE_VIS ctype_base
+        -:  330:{
+        -:  331:public:
+        -:  332:#ifdef __GLIBC__
+        -:  333:    typedef unsigned short mask;
+        -:  334:    static const mask space  = _ISspace;
+        -:  335:    static const mask print  = _ISprint;
+        -:  336:    static const mask cntrl  = _IScntrl;
+        -:  337:    static const mask upper  = _ISupper;
+        -:  338:    static const mask lower  = _ISlower;
+        -:  339:    static const mask alpha  = _ISalpha;
+        -:  340:    static const mask digit  = _ISdigit;
+        -:  341:    static const mask punct  = _ISpunct;
+        -:  342:    static const mask xdigit = _ISxdigit;
+        -:  343:    static const mask blank  = _ISblank;
+        -:  344:#elif defined(_WIN32)
+        -:  345:    typedef unsigned short mask;
+        -:  346:    static const mask space  = _SPACE;
+        -:  347:    static const mask print  = _BLANK|_PUNCT|_ALPHA|_DIGIT;
+        -:  348:    static const mask cntrl  = _CONTROL;
+        -:  349:    static const mask upper  = _UPPER;
+        -:  350:    static const mask lower  = _LOWER;
+        -:  351:    static const mask alpha  = _ALPHA;
+        -:  352:    static const mask digit  = _DIGIT;
+        -:  353:    static const mask punct  = _PUNCT;
+        -:  354:    static const mask xdigit = _HEX;
+        -:  355:    static const mask blank  = _BLANK;
+        -:  356:# define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_PRINT
+        -:  357:#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__EMSCRIPTEN__) || defined(__NetBSD__)
+        -:  358:# ifdef __APPLE__
+        -:  359:    typedef __uint32_t mask;
+        -:  360:# elif defined(__FreeBSD__)
+        -:  361:    typedef unsigned long mask;
+        -:  362:# elif defined(__EMSCRIPTEN__) ||  defined(__NetBSD__)
+        -:  363:    typedef unsigned short mask;
+        -:  364:# endif
+        -:  365:    static const mask space  = _CTYPE_S;
+        -:  366:    static const mask print  = _CTYPE_R;
+        -:  367:    static const mask cntrl  = _CTYPE_C;
+        -:  368:    static const mask upper  = _CTYPE_U;
+        -:  369:    static const mask lower  = _CTYPE_L;
+        -:  370:    static const mask alpha  = _CTYPE_A;
+        -:  371:    static const mask digit  = _CTYPE_D;
+        -:  372:    static const mask punct  = _CTYPE_P;
+        -:  373:    static const mask xdigit = _CTYPE_X;
+        -:  374:
+        -:  375:# if defined(__NetBSD__)
+        -:  376:    static const mask blank  = _CTYPE_BL;
+        -:  377:# else
+        -:  378:    static const mask blank  = _CTYPE_B;
+        -:  379:# endif
+        -:  380:#elif defined(__sun__) || defined(_AIX)
+        -:  381:    typedef unsigned int mask;
+        -:  382:    static const mask space  = _ISSPACE;
+        -:  383:    static const mask print  = _ISPRINT;
+        -:  384:    static const mask cntrl  = _ISCNTRL;
+        -:  385:    static const mask upper  = _ISUPPER;
+        -:  386:    static const mask lower  = _ISLOWER;
+        -:  387:    static const mask alpha  = _ISALPHA;
+        -:  388:    static const mask digit  = _ISDIGIT;
+        -:  389:    static const mask punct  = _ISPUNCT;
+        -:  390:    static const mask xdigit = _ISXDIGIT;
+        -:  391:    static const mask blank  = _ISBLANK;
+        -:  392:#elif defined(_NEWLIB_VERSION)
+        -:  393:    // Same type as Newlib's _ctype_ array in newlib/libc/include/ctype.h.
+        -:  394:    typedef char mask;
+        -:  395:    static const mask space  = _S;
+        -:  396:    static const mask print  = _P | _U | _L | _N | _B;
+        -:  397:    static const mask cntrl  = _C;
+        -:  398:    static const mask upper  = _U;
+        -:  399:    static const mask lower  = _L;
+        -:  400:    static const mask alpha  = _U | _L;
+        -:  401:    static const mask digit  = _N;
+        -:  402:    static const mask punct  = _P;
+        -:  403:    static const mask xdigit = _X | _N;
+        -:  404:    static const mask blank  = _B;
+        -:  405:# define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_PRINT
+        -:  406:# define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_ALPHA
+        -:  407:# define _LIBCPP_CTYPE_MASK_IS_COMPOSITE_XDIGIT
+        -:  408:#else
+        -:  409:    typedef unsigned long mask;
+        -:  410:    static const mask space  = 1<<0;
+        -:  411:    static const mask print  = 1<<1;
+        -:  412:    static const mask cntrl  = 1<<2;
+        -:  413:    static const mask upper  = 1<<3;
+        -:  414:    static const mask lower  = 1<<4;
+        -:  415:    static const mask alpha  = 1<<5;
+        -:  416:    static const mask digit  = 1<<6;
+        -:  417:    static const mask punct  = 1<<7;
+        -:  418:    static const mask xdigit = 1<<8;
+        -:  419:    static const mask blank  = 1<<9;
+        -:  420:#endif
+        -:  421:    static const mask alnum  = alpha | digit;
+        -:  422:    static const mask graph  = alnum | punct;
+        -:  423:
+        -:  424:    _LIBCPP_ALWAYS_INLINE ctype_base() {}
+        -:  425:};
+        -:  426:
+        -:  427:template <class _CharT> class _LIBCPP_TYPE_VIS_ONLY ctype;
+        -:  428:
+        -:  429:template <>
+        -:  430:class _LIBCPP_TYPE_VIS ctype<wchar_t>
+        -:  431:    : public locale::facet,
+        -:  432:      public ctype_base
+        -:  433:{
+        -:  434:public:
+        -:  435:    typedef wchar_t char_type;
+        -:  436:
+        -:  437:    _LIBCPP_ALWAYS_INLINE
+        -:  438:    explicit ctype(size_t __refs = 0)
+        -:  439:        : locale::facet(__refs) {}
+        -:  440:
+        -:  441:    _LIBCPP_ALWAYS_INLINE
+        -:  442:    bool is(mask __m, char_type __c) const
+        -:  443:    {
+        -:  444:        return do_is(__m, __c);
+        -:  445:    }
+        -:  446:
+        -:  447:    _LIBCPP_ALWAYS_INLINE
+        -:  448:    const char_type* is(const char_type* __low, const char_type* __high, mask* __vec) const
+        -:  449:    {
+        -:  450:        return do_is(__low, __high, __vec);
+        -:  451:    }
+        -:  452:
+        -:  453:    _LIBCPP_ALWAYS_INLINE
+        -:  454:    const char_type* scan_is(mask __m, const char_type* __low, const char_type* __high) const
+        -:  455:    {
+        -:  456:        return do_scan_is(__m, __low, __high);
+        -:  457:    }
+        -:  458:
+        -:  459:    _LIBCPP_ALWAYS_INLINE
+        -:  460:    const char_type* scan_not(mask __m, const char_type* __low, const char_type* __high) const
+        -:  461:    {
+        -:  462:        return do_scan_not(__m, __low, __high);
+        -:  463:    }
+        -:  464:
+        -:  465:    _LIBCPP_ALWAYS_INLINE
+        -:  466:    char_type toupper(char_type __c) const
+        -:  467:    {
+        -:  468:        return do_toupper(__c);
+        -:  469:    }
+        -:  470:
+        -:  471:    _LIBCPP_ALWAYS_INLINE
+        -:  472:    const char_type* toupper(char_type* __low, const char_type* __high) const
+        -:  473:    {
+        -:  474:        return do_toupper(__low, __high);
+        -:  475:    }
+        -:  476:
+        -:  477:    _LIBCPP_ALWAYS_INLINE
+        -:  478:    char_type tolower(char_type __c) const
+        -:  479:    {
+        -:  480:        return do_tolower(__c);
+        -:  481:    }
+        -:  482:
+        -:  483:    _LIBCPP_ALWAYS_INLINE
+        -:  484:    const char_type* tolower(char_type* __low, const char_type* __high) const
+        -:  485:    {
+        -:  486:        return do_tolower(__low, __high);
+        -:  487:    }
+        -:  488:
+        -:  489:    _LIBCPP_ALWAYS_INLINE
+        -:  490:    char_type widen(char __c) const
+        -:  491:    {
+        -:  492:        return do_widen(__c);
+        -:  493:    }
+        -:  494:
+        -:  495:    _LIBCPP_ALWAYS_INLINE
+        -:  496:    const char* widen(const char* __low, const char* __high, char_type* __to) const
+        -:  497:    {
+        -:  498:        return do_widen(__low, __high, __to);
+        -:  499:    }
+        -:  500:
+        -:  501:    _LIBCPP_ALWAYS_INLINE
+        -:  502:    char narrow(char_type __c, char __dfault) const
+        -:  503:    {
+        -:  504:        return do_narrow(__c, __dfault);
+        -:  505:    }
+        -:  506:
+        -:  507:    _LIBCPP_ALWAYS_INLINE
+        -:  508:    const char_type* narrow(const char_type* __low, const char_type* __high, char __dfault, char* __to) const
+        -:  509:    {
+        -:  510:        return do_narrow(__low, __high, __dfault, __to);
+        -:  511:    }
+        -:  512:
+        -:  513:    static locale::id id;
+        -:  514:
+        -:  515:protected:
+        -:  516:    ~ctype();
+        -:  517:    virtual bool do_is(mask __m, char_type __c) const;
+        -:  518:    virtual const char_type* do_is(const char_type* __low, const char_type* __high, mask* __vec) const;
+        -:  519:    virtual const char_type* do_scan_is(mask __m, const char_type* __low, const char_type* __high) const;
+        -:  520:    virtual const char_type* do_scan_not(mask __m, const char_type* __low, const char_type* __high) const;
+        -:  521:    virtual char_type do_toupper(char_type) const;
+        -:  522:    virtual const char_type* do_toupper(char_type* __low, const char_type* __high) const;
+        -:  523:    virtual char_type do_tolower(char_type) const;
+        -:  524:    virtual const char_type* do_tolower(char_type* __low, const char_type* __high) const;
+        -:  525:    virtual char_type do_widen(char) const;
+        -:  526:    virtual const char* do_widen(const char* __low, const char* __high, char_type* __dest) const;
+        -:  527:    virtual char do_narrow(char_type, char __dfault) const;
+        -:  528:    virtual const char_type* do_narrow(const char_type* __low, const char_type* __high, char __dfault, char* __dest) const;
+        -:  529:};
+        -:  530:
+        -:  531:template <>
+        -:  532:class _LIBCPP_TYPE_VIS ctype<char>
+        -:  533:    : public locale::facet, public ctype_base
+        -:  534:{
+        -:  535:    const mask* __tab_;
+        -:  536:    bool        __del_;
+        -:  537:public:
+        -:  538:    typedef char char_type;
+        -:  539:
+        -:  540:    explicit ctype(const mask* __tab = 0, bool __del = false, size_t __refs = 0);
+        -:  541:
+        -:  542:    _LIBCPP_ALWAYS_INLINE
+        -:  543:    bool is(mask __m, char_type __c) const
+        -:  544:    {
+        -:  545:        return isascii(__c) ? (__tab_[static_cast<int>(__c)] & __m) !=0 : false;
+        -:  546:    }
+        -:  547:
+        -:  548:    _LIBCPP_ALWAYS_INLINE
+        -:  549:    const char_type* is(const char_type* __low, const char_type* __high, mask* __vec) const
+        -:  550:    {
+        -:  551:        for (; __low != __high; ++__low, ++__vec)
+        -:  552:            *__vec = isascii(*__low) ? __tab_[static_cast<int>(*__low)] : 0;
+        -:  553:        return __low;
+        -:  554:    }
+        -:  555:
+        -:  556:    _LIBCPP_ALWAYS_INLINE
+        -:  557:    const char_type* scan_is (mask __m, const char_type* __low, const char_type* __high) const
+        -:  558:    {
+        -:  559:        for (; __low != __high; ++__low)
+        -:  560:            if (isascii(*__low) && (__tab_[static_cast<int>(*__low)] & __m))
+        -:  561:                break;
+        -:  562:        return __low;
+        -:  563:    }
+        -:  564:
+        -:  565:    _LIBCPP_ALWAYS_INLINE
+        -:  566:    const char_type* scan_not(mask __m, const char_type* __low, const char_type* __high) const
+        -:  567:    {
+        -:  568:        for (; __low != __high; ++__low)
+        -:  569:            if (!(isascii(*__low) && (__tab_[static_cast<int>(*__low)] & __m)))
+        -:  570:                break;
+        -:  571:        return __low;
+        -:  572:    }
+        -:  573:
+        -:  574:    _LIBCPP_ALWAYS_INLINE
+        -:  575:    char_type toupper(char_type __c) const
+        -:  576:    {
+        -:  577:        return do_toupper(__c);
+        -:  578:    }
+        -:  579:
+        -:  580:    _LIBCPP_ALWAYS_INLINE
+        -:  581:    const char_type* toupper(char_type* __low, const char_type* __high) const
+        -:  582:    {
+        -:  583:        return do_toupper(__low, __high);
+        -:  584:    }
+        -:  585:
+        -:  586:    _LIBCPP_ALWAYS_INLINE
+        -:  587:    char_type tolower(char_type __c) const
+        -:  588:    {
+        -:  589:        return do_tolower(__c);
+        -:  590:    }
+        -:  591:
+        -:  592:    _LIBCPP_ALWAYS_INLINE
+        -:  593:    const char_type* tolower(char_type* __low, const char_type* __high) const
+        -:  594:    {
+        -:  595:        return do_tolower(__low, __high);
+        -:  596:    }
+        -:  597:
+        -:  598:    _LIBCPP_ALWAYS_INLINE
+        -:  599:    char_type widen(char __c) const
+        -:  600:    {
+      817:  601:        return do_widen(__c);
+        -:  602:    }
+        -:  603:
+        -:  604:    _LIBCPP_ALWAYS_INLINE
+        -:  605:    const char* widen(const char* __low, const char* __high, char_type* __to) const
+        -:  606:    {
+        -:  607:        return do_widen(__low, __high, __to);
+        -:  608:    }
+        -:  609:
+        -:  610:    _LIBCPP_ALWAYS_INLINE
+        -:  611:    char narrow(char_type __c, char __dfault) const
+        -:  612:    {
+        -:  613:        return do_narrow(__c, __dfault);
+        -:  614:    }
+        -:  615:
+        -:  616:    _LIBCPP_ALWAYS_INLINE
+        -:  617:    const char* narrow(const char_type* __low, const char_type* __high, char __dfault, char* __to) const
+        -:  618:    {
+        -:  619:        return do_narrow(__low, __high, __dfault, __to);
+        -:  620:    }
+        -:  621:
+        -:  622:    static locale::id id;
+        -:  623:
+        -:  624:#ifdef _CACHED_RUNES
+        -:  625:    static const size_t table_size = _CACHED_RUNES;
+        -:  626:#else
+        -:  627:    static const size_t table_size = 256;  // FIXME: Don't hardcode this.
+        -:  628:#endif
+        -:  629:    _LIBCPP_ALWAYS_INLINE const mask* table() const  _NOEXCEPT {return __tab_;}
+        -:  630:    static const mask* classic_table()  _NOEXCEPT;
+        -:  631:#if defined(__GLIBC__) || defined(__EMSCRIPTEN__)
+        -:  632:    static const int* __classic_upper_table() _NOEXCEPT;
+        -:  633:    static const int* __classic_lower_table() _NOEXCEPT;
+        -:  634:#endif
+        -:  635:#if defined(__NetBSD__)
+        -:  636:    static const short* __classic_upper_table() _NOEXCEPT;
+        -:  637:    static const short* __classic_lower_table() _NOEXCEPT;
+        -:  638:#endif
+        -:  639:
+        -:  640:protected:
+        -:  641:    ~ctype();
+        -:  642:    virtual char_type do_toupper(char_type __c) const;
+        -:  643:    virtual const char_type* do_toupper(char_type* __low, const char_type* __high) const;
+        -:  644:    virtual char_type do_tolower(char_type __c) const;
+        -:  645:    virtual const char_type* do_tolower(char_type* __low, const char_type* __high) const;
+        -:  646:    virtual char_type do_widen(char __c) const;
+        -:  647:    virtual const char* do_widen(const char* __low, const char* __high, char_type* __to) const;
+        -:  648:    virtual char do_narrow(char_type __c, char __dfault) const;
+        -:  649:    virtual const char* do_narrow(const char_type* __low, const char_type* __high, char __dfault, char* __to) const;
+        -:  650:};
+        -:  651:
+        -:  652:// template <class CharT> class ctype_byname;
+        -:  653:
+        -:  654:template <class _CharT> class _LIBCPP_TYPE_VIS_ONLY ctype_byname;
+        -:  655:
+        -:  656:template <>
+        -:  657:class _LIBCPP_TYPE_VIS ctype_byname<char>
+        -:  658:    : public ctype<char>
+        -:  659:{
+        -:  660:    locale_t __l;
+        -:  661:
+        -:  662:public:
+        -:  663:    explicit ctype_byname(const char*, size_t = 0);
+        -:  664:    explicit ctype_byname(const string&, size_t = 0);
+        -:  665:
+        -:  666:protected:
+        -:  667:    ~ctype_byname();
+        -:  668:    virtual char_type do_toupper(char_type) const;
+        -:  669:    virtual const char_type* do_toupper(char_type* __low, const char_type* __high) const;
+        -:  670:    virtual char_type do_tolower(char_type) const;
+        -:  671:    virtual const char_type* do_tolower(char_type* __low, const char_type* __high) const;
+        -:  672:};
+        -:  673:
+        -:  674:template <>
+        -:  675:class _LIBCPP_TYPE_VIS ctype_byname<wchar_t>
+        -:  676:    : public ctype<wchar_t>
+        -:  677:{
+        -:  678:    locale_t __l;
+        -:  679:
+        -:  680:public:
+        -:  681:    explicit ctype_byname(const char*, size_t = 0);
+        -:  682:    explicit ctype_byname(const string&, size_t = 0);
+        -:  683:
+        -:  684:protected:
+        -:  685:    ~ctype_byname();
+        -:  686:    virtual bool do_is(mask __m, char_type __c) const;
+        -:  687:    virtual const char_type* do_is(const char_type* __low, const char_type* __high, mask* __vec) const;
+        -:  688:    virtual const char_type* do_scan_is(mask __m, const char_type* __low, const char_type* __high) const;
+        -:  689:    virtual const char_type* do_scan_not(mask __m, const char_type* __low, const char_type* __high) const;
+        -:  690:    virtual char_type do_toupper(char_type) const;
+        -:  691:    virtual const char_type* do_toupper(char_type* __low, const char_type* __high) const;
+        -:  692:    virtual char_type do_tolower(char_type) const;
+        -:  693:    virtual const char_type* do_tolower(char_type* __low, const char_type* __high) const;
+        -:  694:    virtual char_type do_widen(char) const;
+        -:  695:    virtual const char* do_widen(const char* __low, const char* __high, char_type* __dest) const;
+        -:  696:    virtual char do_narrow(char_type, char __dfault) const;
+        -:  697:    virtual const char_type* do_narrow(const char_type* __low, const char_type* __high, char __dfault, char* __dest) const;
+        -:  698:};
+        -:  699:
+        -:  700:template <class _CharT>
+        -:  701:inline _LIBCPP_INLINE_VISIBILITY
+        -:  702:bool
+        -:  703:isspace(_CharT __c, const locale& __loc)
+        -:  704:{
+        -:  705:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::space, __c);
+        -:  706:}
+        -:  707:
+        -:  708:template <class _CharT>
+        -:  709:inline _LIBCPP_INLINE_VISIBILITY
+        -:  710:bool
+        -:  711:isprint(_CharT __c, const locale& __loc)
+        -:  712:{
+        -:  713:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::print, __c);
+        -:  714:}
+        -:  715:
+        -:  716:template <class _CharT>
+        -:  717:inline _LIBCPP_INLINE_VISIBILITY
+        -:  718:bool
+        -:  719:iscntrl(_CharT __c, const locale& __loc)
+        -:  720:{
+        -:  721:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::cntrl, __c);
+        -:  722:}
+        -:  723:
+        -:  724:template <class _CharT>
+        -:  725:inline _LIBCPP_INLINE_VISIBILITY
+        -:  726:bool
+        -:  727:isupper(_CharT __c, const locale& __loc)
+        -:  728:{
+        -:  729:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::upper, __c);
+        -:  730:}
+        -:  731:
+        -:  732:template <class _CharT>
+        -:  733:inline _LIBCPP_INLINE_VISIBILITY
+        -:  734:bool
+        -:  735:islower(_CharT __c, const locale& __loc)
+        -:  736:{
+        -:  737:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::lower, __c);
+        -:  738:}
+        -:  739:
+        -:  740:template <class _CharT>
+        -:  741:inline _LIBCPP_INLINE_VISIBILITY
+        -:  742:bool
+        -:  743:isalpha(_CharT __c, const locale& __loc)
+        -:  744:{
+        -:  745:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::alpha, __c);
+        -:  746:}
+        -:  747:
+        -:  748:template <class _CharT>
+        -:  749:inline _LIBCPP_INLINE_VISIBILITY
+        -:  750:bool
+        -:  751:isdigit(_CharT __c, const locale& __loc)
+        -:  752:{
+        -:  753:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::digit, __c);
+        -:  754:}
+        -:  755:
+        -:  756:template <class _CharT>
+        -:  757:inline _LIBCPP_INLINE_VISIBILITY
+        -:  758:bool
+        -:  759:ispunct(_CharT __c, const locale& __loc)
+        -:  760:{
+        -:  761:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::punct, __c);
+        -:  762:}
+        -:  763:
+        -:  764:template <class _CharT>
+        -:  765:inline _LIBCPP_INLINE_VISIBILITY
+        -:  766:bool
+        -:  767:isxdigit(_CharT __c, const locale& __loc)
+        -:  768:{
+        -:  769:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::xdigit, __c);
+        -:  770:}
+        -:  771:
+        -:  772:template <class _CharT>
+        -:  773:inline _LIBCPP_INLINE_VISIBILITY
+        -:  774:bool
+        -:  775:isalnum(_CharT __c, const locale& __loc)
+        -:  776:{
+        -:  777:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::alnum, __c);
+        -:  778:}
+        -:  779:
+        -:  780:template <class _CharT>
+        -:  781:inline _LIBCPP_INLINE_VISIBILITY
+        -:  782:bool
+        -:  783:isgraph(_CharT __c, const locale& __loc)
+        -:  784:{
+        -:  785:    return use_facet<ctype<_CharT> >(__loc).is(ctype_base::graph, __c);
+        -:  786:}
+        -:  787:
+        -:  788:template <class _CharT>
+        -:  789:inline _LIBCPP_INLINE_VISIBILITY
+        -:  790:_CharT
+        -:  791:toupper(_CharT __c, const locale& __loc)
+        -:  792:{
+        -:  793:    return use_facet<ctype<_CharT> >(__loc).toupper(__c);
+        -:  794:}
+        -:  795:
+        -:  796:template <class _CharT>
+        -:  797:inline _LIBCPP_INLINE_VISIBILITY
+        -:  798:_CharT
+        -:  799:tolower(_CharT __c, const locale& __loc)
+        -:  800:{
+        -:  801:    return use_facet<ctype<_CharT> >(__loc).tolower(__c);
+        -:  802:}
+        -:  803:
+        -:  804:// codecvt_base
+        -:  805:
+        -:  806:class _LIBCPP_TYPE_VIS codecvt_base
+        -:  807:{
+        -:  808:public:
+        -:  809:    _LIBCPP_ALWAYS_INLINE codecvt_base() {}
+        -:  810:    enum result {ok, partial, error, noconv};
+        -:  811:};
+        -:  812:
+        -:  813:// template <class internT, class externT, class stateT> class codecvt;
+        -:  814:
+        -:  815:template <class _InternT, class _ExternT, class _StateT> class _LIBCPP_TYPE_VIS_ONLY codecvt;
+        -:  816:
+        -:  817:// template <> class codecvt<char, char, mbstate_t>
+        -:  818:
+        -:  819:template <>
+        -:  820:class _LIBCPP_TYPE_VIS codecvt<char, char, mbstate_t>
+        -:  821:    : public locale::facet,
+        -:  822:      public codecvt_base
+        -:  823:{
+        -:  824:public:
+        -:  825:    typedef char      intern_type;
+        -:  826:    typedef char      extern_type;
+        -:  827:    typedef mbstate_t state_type;
+        -:  828:
+        -:  829:    _LIBCPP_ALWAYS_INLINE
+        -:  830:    explicit codecvt(size_t __refs = 0)
+        -:  831:        : locale::facet(__refs) {}
+        -:  832:
+        -:  833:    _LIBCPP_ALWAYS_INLINE
+        -:  834:    result out(state_type& __st,
+        -:  835:               const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -:  836:               extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -:  837:    {
+        -:  838:        return do_out(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -:  839:    }
+        -:  840:
+        -:  841:    _LIBCPP_ALWAYS_INLINE
+        -:  842:    result unshift(state_type& __st,
+        -:  843:                   extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -:  844:    {
+        -:  845:        return do_unshift(__st, __to, __to_end, __to_nxt);
+        -:  846:    }
+        -:  847:
+        -:  848:    _LIBCPP_ALWAYS_INLINE
+        -:  849:    result in(state_type& __st,
+        -:  850:              const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -:  851:              intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const
+        -:  852:    {
+        -:  853:        return do_in(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -:  854:    }
+        -:  855:
+        -:  856:    _LIBCPP_ALWAYS_INLINE
+        -:  857:    int encoding() const  _NOEXCEPT
+        -:  858:    {
+        -:  859:        return do_encoding();
+        -:  860:    }
+        -:  861:
+        -:  862:    _LIBCPP_ALWAYS_INLINE
+        -:  863:    bool always_noconv() const  _NOEXCEPT
+        -:  864:    {
+        -:  865:        return do_always_noconv();
+        -:  866:    }
+        -:  867:
+        -:  868:    _LIBCPP_ALWAYS_INLINE
+        -:  869:    int length(state_type& __st, const extern_type* __frm, const extern_type* __end, size_t __mx) const
+        -:  870:    {
+        -:  871:        return do_length(__st, __frm, __end, __mx);
+        -:  872:    }
+        -:  873:
+        -:  874:    _LIBCPP_ALWAYS_INLINE
+        -:  875:    int max_length() const  _NOEXCEPT
+        -:  876:    {
+        -:  877:        return do_max_length();
+        -:  878:    }
+        -:  879:
+        -:  880:    static locale::id id;
+        -:  881:
+        -:  882:protected:
+        -:  883:    _LIBCPP_ALWAYS_INLINE
+        -:  884:    explicit codecvt(const char*, size_t __refs = 0)
+        -:  885:        : locale::facet(__refs) {}
+        -:  886:
+        -:  887:    ~codecvt();
+        -:  888:
+        -:  889:    virtual result do_out(state_type& __st,
+        -:  890:                          const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -:  891:                          extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -:  892:    virtual result do_in(state_type& __st,
+        -:  893:                         const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -:  894:                         intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const;
+        -:  895:    virtual result do_unshift(state_type& __st,
+        -:  896:                              extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -:  897:    virtual int do_encoding() const  _NOEXCEPT;
+        -:  898:    virtual bool do_always_noconv() const  _NOEXCEPT;
+        -:  899:    virtual int do_length(state_type& __st, const extern_type* __frm, const extern_type* __end, size_t __mx) const;
+        -:  900:    virtual int do_max_length() const  _NOEXCEPT;
+        -:  901:};
+        -:  902:
+        -:  903:// template <> class codecvt<wchar_t, char, mbstate_t>
+        -:  904:
+        -:  905:template <>
+        -:  906:class _LIBCPP_TYPE_VIS codecvt<wchar_t, char, mbstate_t>
+        -:  907:    : public locale::facet,
+        -:  908:      public codecvt_base
+        -:  909:{
+        -:  910:    locale_t __l;
+        -:  911:public:
+        -:  912:    typedef wchar_t   intern_type;
+        -:  913:    typedef char      extern_type;
+        -:  914:    typedef mbstate_t state_type;
+        -:  915:
+        -:  916:    explicit codecvt(size_t __refs = 0);
+        -:  917:
+        -:  918:    _LIBCPP_ALWAYS_INLINE
+        -:  919:    result out(state_type& __st,
+        -:  920:               const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -:  921:               extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -:  922:    {
+        -:  923:        return do_out(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -:  924:    }
+        -:  925:
+        -:  926:    _LIBCPP_ALWAYS_INLINE
+        -:  927:    result unshift(state_type& __st,
+        -:  928:                   extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -:  929:    {
+        -:  930:        return do_unshift(__st, __to, __to_end, __to_nxt);
+        -:  931:    }
+        -:  932:
+        -:  933:    _LIBCPP_ALWAYS_INLINE
+        -:  934:    result in(state_type& __st,
+        -:  935:              const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -:  936:              intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const
+        -:  937:    {
+        -:  938:        return do_in(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -:  939:    }
+        -:  940:
+        -:  941:    _LIBCPP_ALWAYS_INLINE
+        -:  942:    int encoding() const  _NOEXCEPT
+        -:  943:    {
+        -:  944:        return do_encoding();
+        -:  945:    }
+        -:  946:
+        -:  947:    _LIBCPP_ALWAYS_INLINE
+        -:  948:    bool always_noconv() const  _NOEXCEPT
+        -:  949:    {
+        -:  950:        return do_always_noconv();
+        -:  951:    }
+        -:  952:
+        -:  953:    _LIBCPP_ALWAYS_INLINE
+        -:  954:    int length(state_type& __st, const extern_type* __frm, const extern_type* __end, size_t __mx) const
+        -:  955:    {
+        -:  956:        return do_length(__st, __frm, __end, __mx);
+        -:  957:    }
+        -:  958:
+        -:  959:    _LIBCPP_ALWAYS_INLINE
+        -:  960:    int max_length() const  _NOEXCEPT
+        -:  961:    {
+        -:  962:        return do_max_length();
+        -:  963:    }
+        -:  964:
+        -:  965:    static locale::id id;
+        -:  966:
+        -:  967:protected:
+        -:  968:    explicit codecvt(const char*, size_t __refs = 0);
+        -:  969:
+        -:  970:    ~codecvt();
+        -:  971:
+        -:  972:    virtual result do_out(state_type& __st,
+        -:  973:                          const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -:  974:                          extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -:  975:    virtual result do_in(state_type& __st,
+        -:  976:                         const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -:  977:                         intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const;
+        -:  978:    virtual result do_unshift(state_type& __st,
+        -:  979:                              extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -:  980:    virtual int do_encoding() const  _NOEXCEPT;
+        -:  981:    virtual bool do_always_noconv() const  _NOEXCEPT;
+        -:  982:    virtual int do_length(state_type&, const extern_type* __frm, const extern_type* __end, size_t __mx) const;
+        -:  983:    virtual int do_max_length() const  _NOEXCEPT;
+        -:  984:};
+        -:  985:
+        -:  986:// template <> class codecvt<char16_t, char, mbstate_t>
+        -:  987:
+        -:  988:template <>
+        -:  989:class _LIBCPP_TYPE_VIS codecvt<char16_t, char, mbstate_t>
+        -:  990:    : public locale::facet,
+        -:  991:      public codecvt_base
+        -:  992:{
+        -:  993:public:
+        -:  994:    typedef char16_t  intern_type;
+        -:  995:    typedef char      extern_type;
+        -:  996:    typedef mbstate_t state_type;
+        -:  997:
+        -:  998:    _LIBCPP_ALWAYS_INLINE
+        -:  999:    explicit codecvt(size_t __refs = 0)
+        -: 1000:        : locale::facet(__refs) {}
+        -: 1001:
+        -: 1002:    _LIBCPP_ALWAYS_INLINE
+        -: 1003:    result out(state_type& __st,
+        -: 1004:               const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -: 1005:               extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -: 1006:    {
+        -: 1007:        return do_out(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -: 1008:    }
+        -: 1009:
+        -: 1010:    _LIBCPP_ALWAYS_INLINE
+        -: 1011:    result unshift(state_type& __st,
+        -: 1012:                   extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -: 1013:    {
+        -: 1014:        return do_unshift(__st, __to, __to_end, __to_nxt);
+        -: 1015:    }
+        -: 1016:
+        -: 1017:    _LIBCPP_ALWAYS_INLINE
+        -: 1018:    result in(state_type& __st,
+        -: 1019:              const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -: 1020:              intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const
+        -: 1021:    {
+        -: 1022:        return do_in(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -: 1023:    }
+        -: 1024:
+        -: 1025:    _LIBCPP_ALWAYS_INLINE
+        -: 1026:    int encoding() const  _NOEXCEPT
+        -: 1027:    {
+        -: 1028:        return do_encoding();
+        -: 1029:    }
+        -: 1030:
+        -: 1031:    _LIBCPP_ALWAYS_INLINE
+        -: 1032:    bool always_noconv() const  _NOEXCEPT
+        -: 1033:    {
+        -: 1034:        return do_always_noconv();
+        -: 1035:    }
+        -: 1036:
+        -: 1037:    _LIBCPP_ALWAYS_INLINE
+        -: 1038:    int length(state_type& __st, const extern_type* __frm, const extern_type* __end, size_t __mx) const
+        -: 1039:    {
+        -: 1040:        return do_length(__st, __frm, __end, __mx);
+        -: 1041:    }
+        -: 1042:
+        -: 1043:    _LIBCPP_ALWAYS_INLINE
+        -: 1044:    int max_length() const  _NOEXCEPT
+        -: 1045:    {
+        -: 1046:        return do_max_length();
+        -: 1047:    }
+        -: 1048:
+        -: 1049:    static locale::id id;
+        -: 1050:
+        -: 1051:protected:
+        -: 1052:    _LIBCPP_ALWAYS_INLINE
+        -: 1053:    explicit codecvt(const char*, size_t __refs = 0)
+        -: 1054:        : locale::facet(__refs) {}
+        -: 1055:
+        -: 1056:    ~codecvt();
+        -: 1057:
+        -: 1058:    virtual result do_out(state_type& __st,
+        -: 1059:                          const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -: 1060:                          extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -: 1061:    virtual result do_in(state_type& __st,
+        -: 1062:                         const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -: 1063:                         intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const;
+        -: 1064:    virtual result do_unshift(state_type& __st,
+        -: 1065:                              extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -: 1066:    virtual int do_encoding() const  _NOEXCEPT;
+        -: 1067:    virtual bool do_always_noconv() const  _NOEXCEPT;
+        -: 1068:    virtual int do_length(state_type&, const extern_type* __frm, const extern_type* __end, size_t __mx) const;
+        -: 1069:    virtual int do_max_length() const  _NOEXCEPT;
+        -: 1070:};
+        -: 1071:
+        -: 1072:// template <> class codecvt<char32_t, char, mbstate_t>
+        -: 1073:
+        -: 1074:template <>
+        -: 1075:class _LIBCPP_TYPE_VIS codecvt<char32_t, char, mbstate_t>
+        -: 1076:    : public locale::facet,
+        -: 1077:      public codecvt_base
+        -: 1078:{
+        -: 1079:public:
+        -: 1080:    typedef char32_t  intern_type;
+        -: 1081:    typedef char      extern_type;
+        -: 1082:    typedef mbstate_t state_type;
+        -: 1083:
+        -: 1084:    _LIBCPP_ALWAYS_INLINE
+        -: 1085:    explicit codecvt(size_t __refs = 0)
+        -: 1086:        : locale::facet(__refs) {}
+        -: 1087:
+        -: 1088:    _LIBCPP_ALWAYS_INLINE
+        -: 1089:    result out(state_type& __st,
+        -: 1090:               const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -: 1091:               extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -: 1092:    {
+        -: 1093:        return do_out(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -: 1094:    }
+        -: 1095:
+        -: 1096:    _LIBCPP_ALWAYS_INLINE
+        -: 1097:    result unshift(state_type& __st,
+        -: 1098:                   extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const
+        -: 1099:    {
+        -: 1100:        return do_unshift(__st, __to, __to_end, __to_nxt);
+        -: 1101:    }
+        -: 1102:
+        -: 1103:    _LIBCPP_ALWAYS_INLINE
+        -: 1104:    result in(state_type& __st,
+        -: 1105:              const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -: 1106:              intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const
+        -: 1107:    {
+        -: 1108:        return do_in(__st, __frm, __frm_end, __frm_nxt, __to, __to_end, __to_nxt);
+        -: 1109:    }
+        -: 1110:
+        -: 1111:    _LIBCPP_ALWAYS_INLINE
+        -: 1112:    int encoding() const  _NOEXCEPT
+        -: 1113:    {
+        -: 1114:        return do_encoding();
+        -: 1115:    }
+        -: 1116:
+        -: 1117:    _LIBCPP_ALWAYS_INLINE
+        -: 1118:    bool always_noconv() const  _NOEXCEPT
+        -: 1119:    {
+        -: 1120:        return do_always_noconv();
+        -: 1121:    }
+        -: 1122:
+        -: 1123:    _LIBCPP_ALWAYS_INLINE
+        -: 1124:    int length(state_type& __st, const extern_type* __frm, const extern_type* __end, size_t __mx) const
+        -: 1125:    {
+        -: 1126:        return do_length(__st, __frm, __end, __mx);
+        -: 1127:    }
+        -: 1128:
+        -: 1129:    _LIBCPP_ALWAYS_INLINE
+        -: 1130:    int max_length() const  _NOEXCEPT
+        -: 1131:    {
+        -: 1132:        return do_max_length();
+        -: 1133:    }
+        -: 1134:
+        -: 1135:    static locale::id id;
+        -: 1136:
+        -: 1137:protected:
+        -: 1138:    _LIBCPP_ALWAYS_INLINE
+        -: 1139:    explicit codecvt(const char*, size_t __refs = 0)
+        -: 1140:        : locale::facet(__refs) {}
+        -: 1141:
+        -: 1142:    ~codecvt();
+        -: 1143:
+        -: 1144:    virtual result do_out(state_type& __st,
+        -: 1145:                          const intern_type* __frm, const intern_type* __frm_end, const intern_type*& __frm_nxt,
+        -: 1146:                          extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -: 1147:    virtual result do_in(state_type& __st,
+        -: 1148:                         const extern_type* __frm, const extern_type* __frm_end, const extern_type*& __frm_nxt,
+        -: 1149:                         intern_type* __to, intern_type* __to_end, intern_type*& __to_nxt) const;
+        -: 1150:    virtual result do_unshift(state_type& __st,
+        -: 1151:                              extern_type* __to, extern_type* __to_end, extern_type*& __to_nxt) const;
+        -: 1152:    virtual int do_encoding() const  _NOEXCEPT;
+        -: 1153:    virtual bool do_always_noconv() const  _NOEXCEPT;
+        -: 1154:    virtual int do_length(state_type&, const extern_type* __frm, const extern_type* __end, size_t __mx) const;
+        -: 1155:    virtual int do_max_length() const  _NOEXCEPT;
+        -: 1156:};
+        -: 1157:
+        -: 1158:// template <class _InternT, class _ExternT, class _StateT> class codecvt_byname
+        -: 1159:
+        -: 1160:template <class _InternT, class _ExternT, class _StateT>
+        -: 1161:class _LIBCPP_TYPE_VIS_ONLY codecvt_byname
+        -: 1162:    : public codecvt<_InternT, _ExternT, _StateT>
+        -: 1163:{
+        -: 1164:public:
+        -: 1165:    _LIBCPP_ALWAYS_INLINE
+        -: 1166:    explicit codecvt_byname(const char* __nm, size_t __refs = 0)
+        -: 1167:        : codecvt<_InternT, _ExternT, _StateT>(__nm, __refs) {}
+        -: 1168:    _LIBCPP_ALWAYS_INLINE
+        -: 1169:    explicit codecvt_byname(const string& __nm, size_t __refs = 0)
+        -: 1170:        : codecvt<_InternT, _ExternT, _StateT>(__nm.c_str(), __refs) {}
+        -: 1171:protected:
+        -: 1172:    ~codecvt_byname();
+        -: 1173:};
+        -: 1174:
+        -: 1175:template <class _InternT, class _ExternT, class _StateT>
+        -: 1176:codecvt_byname<_InternT, _ExternT, _StateT>::~codecvt_byname()
+        -: 1177:{
+        -: 1178:}
+        -: 1179:
+        -: 1180:_LIBCPP_EXTERN_TEMPLATE2(class _LIBCPP_TYPE_VIS codecvt_byname<char, char, mbstate_t>)
+        -: 1181:_LIBCPP_EXTERN_TEMPLATE2(class _LIBCPP_TYPE_VIS codecvt_byname<wchar_t, char, mbstate_t>)
+        -: 1182:_LIBCPP_EXTERN_TEMPLATE2(class _LIBCPP_TYPE_VIS codecvt_byname<char16_t, char, mbstate_t>)
+        -: 1183:_LIBCPP_EXTERN_TEMPLATE2(class _LIBCPP_TYPE_VIS codecvt_byname<char32_t, char, mbstate_t>)
+        -: 1184:
+        -: 1185:_LIBCPP_FUNC_VIS void __throw_runtime_error(const char*);
+        -: 1186:
+        -: 1187:template <size_t _Np>
+        -: 1188:struct __narrow_to_utf8
+        -: 1189:{
+        -: 1190:    template <class _OutputIterator, class _CharT>
+        -: 1191:    _OutputIterator
+        -: 1192:    operator()(_OutputIterator __s, const _CharT* __wb, const _CharT* __we) const;
+        -: 1193:};
+        -: 1194:
+        -: 1195:template <>
+        -: 1196:struct __narrow_to_utf8<8>
+        -: 1197:{
+        -: 1198:    template <class _OutputIterator, class _CharT>
+        -: 1199:    _LIBCPP_ALWAYS_INLINE
+        -: 1200:    _OutputIterator
+        -: 1201:    operator()(_OutputIterator __s, const _CharT* __wb, const _CharT* __we) const
+        -: 1202:    {
+        -: 1203:        for (; __wb < __we; ++__wb, ++__s)
+        -: 1204:            *__s = *__wb;
+        -: 1205:        return __s;
+        -: 1206:    }
+        -: 1207:};
+        -: 1208:
+        -: 1209:template <>
+        -: 1210:struct __narrow_to_utf8<16>
+        -: 1211:    : public codecvt<char16_t, char, mbstate_t>
+        -: 1212:{
+        -: 1213:    _LIBCPP_ALWAYS_INLINE
+        -: 1214:    __narrow_to_utf8() : codecvt<char16_t, char, mbstate_t>(1) {}
+        -: 1215:
+        -: 1216:    ~__narrow_to_utf8();
+        -: 1217:
+        -: 1218:    template <class _OutputIterator, class _CharT>
+        -: 1219:    _LIBCPP_ALWAYS_INLINE
+        -: 1220:    _OutputIterator
+        -: 1221:    operator()(_OutputIterator __s, const _CharT* __wb, const _CharT* __we) const
+        -: 1222:    {
+        -: 1223:        result __r = ok;
+        -: 1224:        mbstate_t __mb;
+        -: 1225:        while (__wb < __we && __r != error)
+        -: 1226:        {
+        -: 1227:            const int __sz = 32;
+        -: 1228:            char __buf[__sz];
+        -: 1229:            char* __bn;
+        -: 1230:            const char16_t* __wn = (const char16_t*)__wb;
+        -: 1231:            __r = do_out(__mb, (const char16_t*)__wb, (const char16_t*)__we, __wn,
+        -: 1232:                         __buf, __buf+__sz, __bn);
+        -: 1233:            if (__r == codecvt_base::error || __wn == (const char16_t*)__wb)
+        -: 1234:                __throw_runtime_error("locale not supported");
+        -: 1235:            for (const char* __p = __buf; __p < __bn; ++__p, ++__s)
+        -: 1236:                *__s = *__p;
+        -: 1237:            __wb = (const _CharT*)__wn;
+        -: 1238:        }
+        -: 1239:        return __s;
+        -: 1240:    }
+        -: 1241:};
+        -: 1242:
+        -: 1243:template <>
+        -: 1244:struct __narrow_to_utf8<32>
+        -: 1245:    : public codecvt<char32_t, char, mbstate_t>
+        -: 1246:{
+        -: 1247:    _LIBCPP_ALWAYS_INLINE
+        -: 1248:    __narrow_to_utf8() : codecvt<char32_t, char, mbstate_t>(1) {}
+        -: 1249:
+        -: 1250:    ~__narrow_to_utf8();
+        -: 1251:
+        -: 1252:    template <class _OutputIterator, class _CharT>
+        -: 1253:    _LIBCPP_ALWAYS_INLINE
+        -: 1254:    _OutputIterator
+        -: 1255:    operator()(_OutputIterator __s, const _CharT* __wb, const _CharT* __we) const
+        -: 1256:    {
+        -: 1257:        result __r = ok;
+        -: 1258:        mbstate_t __mb;
+        -: 1259:        while (__wb < __we && __r != error)
+        -: 1260:        {
+        -: 1261:            const int __sz = 32;
+        -: 1262:            char __buf[__sz];
+        -: 1263:            char* __bn;
+        -: 1264:            const char32_t* __wn = (const char32_t*)__wb;
+        -: 1265:            __r = do_out(__mb, (const char32_t*)__wb, (const char32_t*)__we, __wn,
+        -: 1266:                         __buf, __buf+__sz, __bn);
+        -: 1267:            if (__r == codecvt_base::error || __wn == (const char32_t*)__wb)
+        -: 1268:                __throw_runtime_error("locale not supported");
+        -: 1269:            for (const char* __p = __buf; __p < __bn; ++__p, ++__s)
+        -: 1270:                *__s = *__p;
+        -: 1271:            __wb = (const _CharT*)__wn;
+        -: 1272:        }
+        -: 1273:        return __s;
+        -: 1274:    }
+        -: 1275:};
+        -: 1276:
+        -: 1277:template <size_t _Np>
+        -: 1278:struct __widen_from_utf8
+        -: 1279:{
+        -: 1280:    template <class _OutputIterator>
+        -: 1281:    _OutputIterator
+        -: 1282:    operator()(_OutputIterator __s, const char* __nb, const char* __ne) const;
+        -: 1283:};
+        -: 1284:
+        -: 1285:template <>
+        -: 1286:struct __widen_from_utf8<8>
+        -: 1287:{
+        -: 1288:    template <class _OutputIterator>
+        -: 1289:    _LIBCPP_ALWAYS_INLINE
+        -: 1290:    _OutputIterator
+        -: 1291:    operator()(_OutputIterator __s, const char* __nb, const char* __ne) const
+        -: 1292:    {
+        -: 1293:        for (; __nb < __ne; ++__nb, ++__s)
+        -: 1294:            *__s = *__nb;
+        -: 1295:        return __s;
+        -: 1296:    }
+        -: 1297:};
+        -: 1298:
+        -: 1299:template <>
+        -: 1300:struct __widen_from_utf8<16>
+        -: 1301:    : public codecvt<char16_t, char, mbstate_t>
+        -: 1302:{
+        -: 1303:    _LIBCPP_ALWAYS_INLINE
+        -: 1304:    __widen_from_utf8() : codecvt<char16_t, char, mbstate_t>(1) {}
+        -: 1305:
+        -: 1306:    ~__widen_from_utf8();
+        -: 1307:
+        -: 1308:    template <class _OutputIterator>
+        -: 1309:    _LIBCPP_ALWAYS_INLINE
+        -: 1310:    _OutputIterator
+        -: 1311:    operator()(_OutputIterator __s, const char* __nb, const char* __ne) const
+        -: 1312:    {
+        -: 1313:        result __r = ok;
+        -: 1314:        mbstate_t __mb;
+        -: 1315:        while (__nb < __ne && __r != error)
+        -: 1316:        {
+        -: 1317:            const int __sz = 32;
+        -: 1318:            char16_t __buf[__sz];
+        -: 1319:            char16_t* __bn;
+        -: 1320:            const char* __nn = __nb;
+        -: 1321:            __r = do_in(__mb, __nb, __ne - __nb > __sz ? __nb+__sz : __ne, __nn,
+        -: 1322:                        __buf, __buf+__sz, __bn);
+        -: 1323:            if (__r == codecvt_base::error || __nn == __nb)
+        -: 1324:                __throw_runtime_error("locale not supported");
+        -: 1325:            for (const char16_t* __p = __buf; __p < __bn; ++__p, ++__s)
+        -: 1326:                *__s = (wchar_t)*__p;
+        -: 1327:            __nb = __nn;
+        -: 1328:        }
+        -: 1329:        return __s;
+        -: 1330:    }
+        -: 1331:};
+        -: 1332:
+        -: 1333:template <>
+        -: 1334:struct __widen_from_utf8<32>
+        -: 1335:    : public codecvt<char32_t, char, mbstate_t>
+        -: 1336:{
+        -: 1337:    _LIBCPP_ALWAYS_INLINE
+        -: 1338:    __widen_from_utf8() : codecvt<char32_t, char, mbstate_t>(1) {}
+        -: 1339:
+        -: 1340:    ~__widen_from_utf8();
+        -: 1341:
+        -: 1342:    template <class _OutputIterator>
+        -: 1343:    _LIBCPP_ALWAYS_INLINE
+        -: 1344:    _OutputIterator
+        -: 1345:    operator()(_OutputIterator __s, const char* __nb, const char* __ne) const
+        -: 1346:    {
+        -: 1347:        result __r = ok;
+        -: 1348:        mbstate_t __mb;
+        -: 1349:        while (__nb < __ne && __r != error)
+        -: 1350:        {
+        -: 1351:            const int __sz = 32;
+        -: 1352:            char32_t __buf[__sz];
+        -: 1353:            char32_t* __bn;
+        -: 1354:            const char* __nn = __nb;
+        -: 1355:            __r = do_in(__mb, __nb, __ne - __nb > __sz ? __nb+__sz : __ne, __nn,
+        -: 1356:                        __buf, __buf+__sz, __bn);
+        -: 1357:            if (__r == codecvt_base::error || __nn == __nb)
+        -: 1358:                __throw_runtime_error("locale not supported");
+        -: 1359:            for (const char32_t* __p = __buf; __p < __bn; ++__p, ++__s)
+        -: 1360:                *__s = (wchar_t)*__p;
+        -: 1361:            __nb = __nn;
+        -: 1362:        }
+        -: 1363:        return __s;
+        -: 1364:    }
+        -: 1365:};
+        -: 1366:
+        -: 1367:// template <class charT> class numpunct
+        -: 1368:
+        -: 1369:template <class _CharT> class _LIBCPP_TYPE_VIS_ONLY numpunct;
+        -: 1370:
+        -: 1371:template <>
+        -: 1372:class _LIBCPP_TYPE_VIS numpunct<char>
+        -: 1373:    : public locale::facet
+        -: 1374:{
+        -: 1375:public:
+        -: 1376:    typedef char char_type;
+        -: 1377:    typedef basic_string<char_type> string_type;
+        -: 1378:
+        -: 1379:    explicit numpunct(size_t __refs = 0);
+        -: 1380:
+        -: 1381:    _LIBCPP_ALWAYS_INLINE char_type decimal_point() const {return do_decimal_point();}
+        -: 1382:    _LIBCPP_ALWAYS_INLINE char_type thousands_sep() const {return do_thousands_sep();}
+        -: 1383:    _LIBCPP_ALWAYS_INLINE string grouping() const         {return do_grouping();}
+        -: 1384:    _LIBCPP_ALWAYS_INLINE string_type truename() const    {return do_truename();}
+        -: 1385:    _LIBCPP_ALWAYS_INLINE string_type falsename() const   {return do_falsename();}
+        -: 1386:
+        -: 1387:    static locale::id id;
+        -: 1388:
+        -: 1389:protected:
+        -: 1390:    ~numpunct();
+        -: 1391:    virtual char_type do_decimal_point() const;
+        -: 1392:    virtual char_type do_thousands_sep() const;
+        -: 1393:    virtual string do_grouping() const;
+        -: 1394:    virtual string_type do_truename() const;
+        -: 1395:    virtual string_type do_falsename() const;
+        -: 1396:
+        -: 1397:    char_type __decimal_point_;
+        -: 1398:    char_type __thousands_sep_;
+        -: 1399:    string __grouping_;
+        -: 1400:};
+        -: 1401:
+        -: 1402:template <>
+        -: 1403:class _LIBCPP_TYPE_VIS numpunct<wchar_t>
+        -: 1404:    : public locale::facet
+        -: 1405:{
+        -: 1406:public:
+        -: 1407:    typedef wchar_t char_type;
+        -: 1408:    typedef basic_string<char_type> string_type;
+        -: 1409:
+        -: 1410:    explicit numpunct(size_t __refs = 0);
+        -: 1411:
+        -: 1412:    _LIBCPP_ALWAYS_INLINE char_type decimal_point() const {return do_decimal_point();}
+        -: 1413:    _LIBCPP_ALWAYS_INLINE char_type thousands_sep() const {return do_thousands_sep();}
+        -: 1414:    _LIBCPP_ALWAYS_INLINE string grouping() const         {return do_grouping();}
+        -: 1415:    _LIBCPP_ALWAYS_INLINE string_type truename() const    {return do_truename();}
+        -: 1416:    _LIBCPP_ALWAYS_INLINE string_type falsename() const   {return do_falsename();}
+        -: 1417:
+        -: 1418:    static locale::id id;
+        -: 1419:
+        -: 1420:protected:
+        -: 1421:    ~numpunct();
+        -: 1422:    virtual char_type do_decimal_point() const;
+        -: 1423:    virtual char_type do_thousands_sep() const;
+        -: 1424:    virtual string do_grouping() const;
+        -: 1425:    virtual string_type do_truename() const;
+        -: 1426:    virtual string_type do_falsename() const;
+        -: 1427:
+        -: 1428:    char_type __decimal_point_;
+        -: 1429:    char_type __thousands_sep_;
+        -: 1430:    string __grouping_;
+        -: 1431:};
+        -: 1432:
+        -: 1433:// template <class charT> class numpunct_byname
+        -: 1434:
+        -: 1435:template <class _CharT> class _LIBCPP_TYPE_VIS_ONLY numpunct_byname;
+        -: 1436:
+        -: 1437:template <>
+        -: 1438:class _LIBCPP_TYPE_VIS numpunct_byname<char>
+        -: 1439:: public numpunct<char>
+        -: 1440:{
+        -: 1441:public:
+        -: 1442:    typedef char char_type;
+        -: 1443:    typedef basic_string<char_type> string_type;
+        -: 1444:
+        -: 1445:    explicit numpunct_byname(const char* __nm, size_t __refs = 0);
+        -: 1446:    explicit numpunct_byname(const string& __nm, size_t __refs = 0);
+        -: 1447:
+        -: 1448:protected:
+        -: 1449:    ~numpunct_byname();
+        -: 1450:
+        -: 1451:private:
+        -: 1452:    void __init(const char*);
+        -: 1453:};
+        -: 1454:
+        -: 1455:template <>
+        -: 1456:class _LIBCPP_TYPE_VIS numpunct_byname<wchar_t>
+        -: 1457:: public numpunct<wchar_t>
+        -: 1458:{
+        -: 1459:public:
+        -: 1460:    typedef wchar_t char_type;
+        -: 1461:    typedef basic_string<char_type> string_type;
+        -: 1462:
+        -: 1463:    explicit numpunct_byname(const char* __nm, size_t __refs = 0);
+        -: 1464:    explicit numpunct_byname(const string& __nm, size_t __refs = 0);
+        -: 1465:
+        -: 1466:protected:
+        -: 1467:    ~numpunct_byname();
+        -: 1468:
+        -: 1469:private:
+        -: 1470:    void __init(const char*);
+        -: 1471:};
+        -: 1472:
+        -: 1473:_LIBCPP_END_NAMESPACE_STD
+        -: 1474:
+        -: 1475:#endif  // _LIBCPP___LOCALE

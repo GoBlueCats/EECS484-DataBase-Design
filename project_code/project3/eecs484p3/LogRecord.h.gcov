@@ -1,0 +1,131 @@
+        -:    0:Source:StudentComponent/LogRecord.h
+        -:    0:Graph:LogMgr.gcno
+        -:    0:Data:LogMgr.gcda
+        -:    0:Runs:6
+        -:    0:Programs:1
+        -:    1:#include <string>
+        -:    2:#include <map>
+        -:    3:
+        -:    4:using namespace std;
+        -:    5:
+        -:    6:enum TxStatus {U, C};
+        -:    7:enum TxType {UPDATE, COMMIT, ABORT, END, CLR, BEGIN_CKPT, END_CKPT};
+        -:    8:
+        -:    9:struct txTableEntry {
+        -:   10:  int lastLSN;
+        -:   11:  TxStatus status;
+       74:   12:  txTableEntry(){};
+    #####:   13:  txTableEntry(int lsn, TxStatus stat) {lastLSN=lsn; status=stat; };
+        -:   14:};
+        -:   15:
+        -:   16:///////////////////  LogRecord  ///////////////////
+        -:   17:
+        -:   18:class LogRecord {
+        -:   19: public:
+        -:   20: LogRecord(int lsn_in, int prev_lsn, int tx_id, TxType txtype) :
+    #####:   21:  lsn(lsn_in), prevLSN(prev_lsn), txID(tx_id), type(txtype) {}
+        -:   22:
+        -:   23:  static LogRecord* stringToRecordPtr(string rec_string);
+        -:   24:
+        -:   25:  virtual string toString();
+        -:   26:
+    #####:   27:  virtual ~LogRecord() {}
+        -:   28:
+      173:   29:  int getLSN() {return lsn;}
+        7:   30:  int getprevLSN() {return prevLSN;}
+       25:   31:  int getTxID() {return txID;}
+      134:   32:  TxType getType(){return type;}
+        -:   33:  
+        -:   34:
+        -:   35: protected:
+        -:   36:  int lsn;
+        -:   37:  int prevLSN;
+        -:   38:  int txID;
+        -:   39:  TxType type;
+        -:   40:
+        -:   41:  //Make a string with the lsn, prevLSN, txID, and type
+        -:   42:  //for use in this and the subclass toString functions
+        -:   43:  string basicToString();  
+        -:   44:};
+        -:   45:///////////////////  End LogRecord  ///////////////////
+        -:   46:
+        -:   47:///////////////////  UpdateLogRecord  ///////////////////
+        -:   48:class UpdateLogRecord : public LogRecord{
+        -:   49: public:
+    #####:   50:  UpdateLogRecord(int lsn_in, int prev_lsn, int tx_id, 
+        -:   51:		 int page_id, int page_offset, 
+        -:   52:		 string before_img, string after_img) :
+    #####:   53:  LogRecord(lsn_in, prev_lsn, tx_id, UPDATE)
+    #####:   54:    {
+    #####:   55:        pid = page_id; 
+    #####:   56:        offset = page_offset;
+    #####:   57:        beforeImage = before_img;
+    #####:   58:        afterImage = after_img;
+    #####:   59:    }
+        -:   60:
+        -:   61:
+        -:   62:
+       55:   63:  int getPageID() {return pid;}
+       14:   64:  int getOffset() {return offset;}
+        5:   65:  string getBeforeImage() {return beforeImage;}
+        9:   66:  string getAfterImage() {return afterImage;}
+        -:   67:
+        -:   68:  virtual string toString();
+        -:   69:
+        -:   70: private:
+        -:   71:  int pid;
+        -:   72:  int offset;
+        -:   73:  string beforeImage;
+        -:   74:  string afterImage;
+        -:   75:};
+        -:   76:///////////////////  End UpdateLogRecord  ///////////////////
+        -:   77:
+        -:   78:///////////////////  CompensationLogRecord  ///////////////////
+        -:   79:class CompensationLogRecord : public LogRecord{
+        -:   80: public:
+        -:   81: CompensationLogRecord(int lsn_in, int prev_lsn, int tx_id, 
+        -:   82:		       int page_id, int page_offset,
+        -:   83:		       string after_img, int undo_next_lsn) :
+    #####:   84:  LogRecord(lsn_in, prev_lsn, tx_id, CLR), pageID(page_id),
+    #####:   85:    offset(page_offset), afterImage(after_img),
+    #####:   86:    undoNextLSN(undo_next_lsn) {}
+        -:   87:
+        -:   88:  virtual string toString();
+        -:   89:
+        6:   90:  int getPageID() {return pageID;}
+        1:   91:  int getOffset() {return offset;}
+        1:   92:  string getAfterImage() {return afterImage;}
+    #####:   93:  int getUndoNextLSN() {return undoNextLSN;}
+        -:   94: private: 
+        -:   95:  int pageID;
+        -:   96:  int offset;
+        -:   97:  string afterImage; 
+        -:   98:  //Unlike an update record, only need redo info, not undo info!
+        -:   99:  int undoNextLSN;
+        -:  100:};
+        -:  101:
+        -:  102:///////////////////  End CompenstationLogRecord  ///////////////////
+        -:  103:
+        -:  104://///////////////// ChkptLogRecord  ///////////////////
+        -:  105:class ChkptLogRecord : public LogRecord{
+        -:  106: public:
+        -:  107:  ChkptLogRecord(int lsn_in, int prev_lsn, int tx_id, 
+        -:  108:		      map <int,txTableEntry> tx_table, 
+        -:  109:		      map <int,int> dirty_page_table) :
+    #####:  110:  LogRecord(lsn_in, prev_lsn, tx_id, END_CKPT), txTable(tx_table),
+    #####:  111:    dirtyPageTable(dirty_page_table)
+    #####:  112:    {}
+        -:  113:
+    #####:  114:  map <int,txTableEntry> getTxTable() {return txTable;}
+    #####:  115:  map <int,int> getDirtyPageTable() {return dirtyPageTable;}
+        -:  116:  virtual string toString();
+        -:  117: private:
+        -:  118:  map <int,txTableEntry> txTable;
+        -:  119:  map <int,int> dirtyPageTable;  
+        -:  120:
+        -:  121:  string intMapToString(map <int, int> myMap);
+        -:  122:  string txMapToString(map <int, txTableEntry> myMap);
+        -:  123:};
+        -:  124:
+        -:  125:
+        -:  126:///////////////////  End ChkptLogRecord  ///////////////////

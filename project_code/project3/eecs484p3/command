@@ -1,0 +1,12 @@
+diff correct/logs/log00.log output/log/log00.log
+diff correct/logs/log01.log output/log/log01.log
+diff correct/logs/log02.log output/log/log02.log
+diff correct/logs/log03.log output/log/log03.log
+diff correct/logs/log04.log output/log/log04.log
+diff correct/logs/log05.log output/log/log05.log
+diff correct/dbs/db00.db output/dbs/db00.db
+diff correct/dbs/db01.db output/dbs/db01.db
+diff correct/dbs/db02.db output/dbs/db02.db
+diff correct/dbs/db03.db output/dbs/db03.db
+diff correct/dbs/db04.db output/dbs/db04.db
+diff correct/dbs/db05.db output/dbs/db05.db

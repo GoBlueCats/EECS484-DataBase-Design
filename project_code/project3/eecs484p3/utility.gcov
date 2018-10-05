@@ -1,0 +1,760 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/utility
+        -:    0:Graph:LogMgr.gcno
+        -:    0:Data:LogMgr.gcda
+        -:    0:Runs:6
+        -:    0:Programs:1
+        -:    1:// -*- C++ -*-
+        -:    2://===-------------------------- utility -----------------------------------===//
+        -:    3://
+        -:    4://                     The LLVM Compiler Infrastructure
+        -:    5://
+        -:    6:// This file is dual licensed under the MIT and the University of Illinois Open
+        -:    7:// Source Licenses. See LICENSE.TXT for details.
+        -:    8://
+        -:    9://===----------------------------------------------------------------------===//
+        -:   10:
+        -:   11:#ifndef _LIBCPP_UTILITY
+        -:   12:#define _LIBCPP_UTILITY
+        -:   13:
+        -:   14:/*
+        -:   15:    utility synopsis
+        -:   16:
+        -:   17:namespace std
+        -:   18:{
+        -:   19:
+        -:   20:template <class T>
+        -:   21:    void
+        -:   22:    swap(T& a, T& b);
+        -:   23:
+        -:   24:namespace rel_ops
+        -:   25:{
+        -:   26:    template<class T> bool operator!=(const T&, const T&);
+        -:   27:    template<class T> bool operator> (const T&, const T&);
+        -:   28:    template<class T> bool operator<=(const T&, const T&);
+        -:   29:    template<class T> bool operator>=(const T&, const T&);
+        -:   30:}
+        -:   31:
+        -:   32:template<class T>
+        -:   33:void
+        -:   34:swap(T& a, T& b) noexcept(is_nothrow_move_constructible<T>::value &&
+        -:   35:                          is_nothrow_move_assignable<T>::value);
+        -:   36:
+        -:   37:template <class T, size_t N>
+        -:   38:void
+        -:   39:swap(T (&a)[N], T (&b)[N]) noexcept(noexcept(swap(*a, *b)));
+        -:   40:
+        -:   41:template <class T> T&& forward(typename remove_reference<T>::type& t) noexcept;  // constexpr in C++14
+        -:   42:template <class T> T&& forward(typename remove_reference<T>::type&& t) noexcept; // constexpr in C++14
+        -:   43:
+        -:   44:template <class T> typename remove_reference<T>::type&& move(T&&) noexcept;      // constexpr in C++14
+        -:   45:
+        -:   46:template <class T>
+        -:   47:    typename conditional
+        -:   48:    <
+        -:   49:        !is_nothrow_move_constructible<T>::value && is_copy_constructible<T>::value,
+        -:   50:        const T&,
+        -:   51:        T&&
+        -:   52:    >::type
+        -:   53:    move_if_noexcept(T& x) noexcept; // constexpr in C++14
+        -:   54:
+        -:   55:template <class T> typename add_rvalue_reference<T>::type declval() noexcept;
+        -:   56:
+        -:   57:template <class T1, class T2>
+        -:   58:struct pair
+        -:   59:{
+        -:   60:    typedef T1 first_type;
+        -:   61:    typedef T2 second_type;
+        -:   62:
+        -:   63:    T1 first;
+        -:   64:    T2 second;
+        -:   65:
+        -:   66:    pair(const pair&) = default;
+        -:   67:    pair(pair&&) = default;
+        -:   68:    constexpr pair();
+        -:   69:    pair(const T1& x, const T2& y);                          // constexpr in C++14
+        -:   70:    template <class U, class V> pair(U&& x, V&& y);          // constexpr in C++14
+        -:   71:    template <class U, class V> pair(const pair<U, V>& p);   // constexpr in C++14
+        -:   72:    template <class U, class V> pair(pair<U, V>&& p);        // constexpr in C++14
+        -:   73:    template <class... Args1, class... Args2>
+        -:   74:        pair(piecewise_construct_t, tuple<Args1...> first_args,
+        -:   75:             tuple<Args2...> second_args);
+        -:   76:
+        -:   77:    template <class U, class V> pair& operator=(const pair<U, V>& p);
+        -:   78:    pair& operator=(pair&& p) noexcept(is_nothrow_move_assignable<T1>::value &&
+        -:   79:                                       is_nothrow_move_assignable<T2>::value);
+        -:   80:    template <class U, class V> pair& operator=(pair<U, V>&& p);
+        -:   81:
+        -:   82:    void swap(pair& p) noexcept(noexcept(swap(first, p.first)) &&
+        -:   83:                                noexcept(swap(second, p.second)));
+        -:   84:};
+        -:   85:
+        -:   86:template <class T1, class T2> bool operator==(const pair<T1,T2>&, const pair<T1,T2>&); // constexpr in C++14
+        -:   87:template <class T1, class T2> bool operator!=(const pair<T1,T2>&, const pair<T1,T2>&); // constexpr in C++14
+        -:   88:template <class T1, class T2> bool operator< (const pair<T1,T2>&, const pair<T1,T2>&); // constexpr in C++14
+        -:   89:template <class T1, class T2> bool operator> (const pair<T1,T2>&, const pair<T1,T2>&); // constexpr in C++14
+        -:   90:template <class T1, class T2> bool operator>=(const pair<T1,T2>&, const pair<T1,T2>&); // constexpr in C++14
+        -:   91:template <class T1, class T2> bool operator<=(const pair<T1,T2>&, const pair<T1,T2>&); // constexpr in C++14
+        -:   92:
+        -:   93:template <class T1, class T2> pair<V1, V2> make_pair(T1&&, T2&&);   // constexpr in C++14
+        -:   94:template <class T1, class T2>
+        -:   95:void
+        -:   96:swap(pair<T1, T2>& x, pair<T1, T2>& y) noexcept(noexcept(x.swap(y)));
+        -:   97:
+        -:   98:struct piecewise_construct_t { };
+        -:   99:constexpr piecewise_construct_t piecewise_construct = piecewise_construct_t();
+        -:  100:
+        -:  101:template <class T> class tuple_size;
+        -:  102:template <size_t I, class T> class tuple_element;
+        -:  103:
+        -:  104:template <class T1, class T2> struct tuple_size<pair<T1, T2> >;
+        -:  105:template <class T1, class T2> struct tuple_element<0, pair<T1, T2> >;
+        -:  106:template <class T1, class T2> struct tuple_element<1, pair<T1, T2> >;
+        -:  107:
+        -:  108:template<size_t I, class T1, class T2>
+        -:  109:    typename tuple_element<I, pair<T1, T2> >::type&
+        -:  110:    get(pair<T1, T2>&) noexcept; // constexpr in C++14
+        -:  111:
+        -:  112:template<size_t I, class T1, class T2>
+        -:  113:    const typename const tuple_element<I, pair<T1, T2> >::type&
+        -:  114:    get(const pair<T1, T2>&) noexcept; // constexpr in C++14
+        -:  115:
+        -:  116:template<size_t I, class T1, class T2>
+        -:  117:    typename tuple_element<I, pair<T1, T2> >::type&&
+        -:  118:    get(pair<T1, T2>&&) noexcept; // constexpr in C++14
+        -:  119:
+        -:  120:template<class T1, class T2>
+        -:  121:    constexpr T1& get(pair<T1, T2>&) noexcept; // C++14
+        -:  122:
+        -:  123:template<size_t I, class T1, class T2>
+        -:  124:    constexpr T1 const& get(pair<T1, T2> const &) noexcept; // C++14
+        -:  125:
+        -:  126:template<size_t I, class T1, class T2>
+        -:  127:    constexpr T1&& get(pair<T1, T2>&&) noexcept; // C++14
+        -:  128:
+        -:  129:// C++14
+        -:  130:
+        -:  131:template<class T, T... I>
+        -:  132:struct integer_sequence
+        -:  133:{
+        -:  134:    typedef T value_type;
+        -:  135:
+        -:  136:    static constexpr size_t size() noexcept;
+        -:  137:};
+        -:  138:
+        -:  139:template<size_t... I>
+        -:  140:  using index_sequence = integer_sequence<size_t, I...>;
+        -:  141:
+        -:  142:template<class T, T N>
+        -:  143:  using make_integer_sequence = integer_sequence<T, 0, 1, ..., N-1>;
+        -:  144:template<size_t N>
+        -:  145:  using make_index_sequence = make_integer_sequence<size_t, N>;
+        -:  146:
+        -:  147:template<class... T>
+        -:  148:  using index_sequence_for = make_index_sequence<sizeof...(T)>;
+        -:  149:
+        -:  150:template<class T, class U=T> 
+        -:  151:    T exchange(T& obj, U&& new_value);
+        -:  152:}  // std
+        -:  153:
+        -:  154:*/
+        -:  155:
+        -:  156:#include <__config>
+        -:  157:#include <__tuple>
+        -:  158:#include <type_traits>
+        -:  159:
+        -:  160:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:  161:#pragma GCC system_header
+        -:  162:#endif
+        -:  163:
+        -:  164:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:  165:
+        -:  166:namespace rel_ops
+        -:  167:{
+        -:  168:
+        -:  169:template<class _Tp>
+        -:  170:inline _LIBCPP_INLINE_VISIBILITY
+        -:  171:bool
+        -:  172:operator!=(const _Tp& __x, const _Tp& __y)
+        -:  173:{
+        -:  174:    return !(__x == __y);
+        -:  175:}
+        -:  176:
+        -:  177:template<class _Tp>
+        -:  178:inline _LIBCPP_INLINE_VISIBILITY
+        -:  179:bool
+        -:  180:operator> (const _Tp& __x, const _Tp& __y)
+        -:  181:{
+        -:  182:    return __y < __x;
+        -:  183:}
+        -:  184:
+        -:  185:template<class _Tp>
+        -:  186:inline _LIBCPP_INLINE_VISIBILITY
+        -:  187:bool
+        -:  188:operator<=(const _Tp& __x, const _Tp& __y)
+        -:  189:{
+        -:  190:    return !(__y < __x);
+        -:  191:}
+        -:  192:
+        -:  193:template<class _Tp>
+        -:  194:inline _LIBCPP_INLINE_VISIBILITY
+        -:  195:bool
+        -:  196:operator>=(const _Tp& __x, const _Tp& __y)
+        -:  197:{
+        -:  198:    return !(__x < __y);
+        -:  199:}
+        -:  200:
+        -:  201:}  // rel_ops
+        -:  202:
+        -:  203:// swap_ranges
+        -:  204:
+        -:  205:// forward
+        -:  206:template<class _Tp, size_t _Np>
+        -:  207:inline _LIBCPP_INLINE_VISIBILITY
+        -:  208:void swap(_Tp (&__a)[_Np], _Tp (&__b)[_Np]) _NOEXCEPT_(__is_nothrow_swappable<_Tp>::value);
+        -:  209:
+        -:  210:template <class _ForwardIterator1, class _ForwardIterator2>
+        -:  211:inline _LIBCPP_INLINE_VISIBILITY
+        -:  212:_ForwardIterator2
+        -:  213:swap_ranges(_ForwardIterator1 __first1, _ForwardIterator1 __last1, _ForwardIterator2 __first2)
+        -:  214:{
+        -:  215:    for(; __first1 != __last1; ++__first1, (void) ++__first2)
+        -:  216:        swap(*__first1, *__first2);
+        -:  217:    return __first2;
+        -:  218:}
+        -:  219:
+        -:  220:template<class _Tp, size_t _Np>
+        -:  221:inline _LIBCPP_INLINE_VISIBILITY
+        -:  222:void
+        -:  223:swap(_Tp (&__a)[_Np], _Tp (&__b)[_Np]) _NOEXCEPT_(__is_nothrow_swappable<_Tp>::value)
+        -:  224:{
+        -:  225:    _VSTD::swap_ranges(__a, __a + _Np, __b);
+        -:  226:}
+        -:  227:
+        -:  228:template <class _Tp>
+        -:  229:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  230:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  231:typename conditional
+        -:  232:<
+        -:  233:    !is_nothrow_move_constructible<_Tp>::value && is_copy_constructible<_Tp>::value,
+        -:  234:    const _Tp&,
+        -:  235:    _Tp&&
+        -:  236:>::type
+        -:  237:#else  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  238:const _Tp&
+        -:  239:#endif
+        -:  240:move_if_noexcept(_Tp& __x) _NOEXCEPT
+        -:  241:{
+        -:  242:    return _VSTD::move(__x);
+        -:  243:}
+        -:  244:
+        -:  245:struct _LIBCPP_TYPE_VIS_ONLY piecewise_construct_t { };
+        -:  246:#if defined(_LIBCPP_HAS_NO_CONSTEXPR) || defined(_LIBCPP_BUILDING_UTILITY)
+        -:  247:extern const piecewise_construct_t piecewise_construct;// = piecewise_construct_t();
+        -:  248:#else
+        -:  249:constexpr piecewise_construct_t piecewise_construct = piecewise_construct_t();
+        -:  250:#endif
+        -:  251:
+        -:  252:template <class _T1, class _T2>
+        -:  253:struct _LIBCPP_TYPE_VIS_ONLY pair
+        -:  254:{
+        -:  255:    typedef _T1 first_type;
+        -:  256:    typedef _T2 second_type;
+        -:  257:
+        -:  258:    _T1 first;
+        -:  259:    _T2 second;
+        -:  260:
+        -:  261:    // pair(const pair&) = default;
+        -:  262:    // pair(pair&&) = default;
+        -:  263:
+        -:  264:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR pair() : first(), second() {}
+        -:  265:
+        -:  266:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  267:    pair(const _T1& __x, const _T2& __y)
+        -:  268:        : first(__x), second(__y) {}
+        -:  269:
+        -:  270:    template<class _U1, class _U2>
+        -:  271:        _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  272:        pair(const pair<_U1, _U2>& __p
+        -:  273:#ifndef _LIBCPP_HAS_NO_ADVANCED_SFINAE
+        -:  274:                 ,typename enable_if<is_convertible<const _U1&, _T1>::value &&
+        -:  275:                                    is_convertible<const _U2&, _T2>::value>::type* = 0
+        -:  276:#endif
+        -:  277:                                      )
+        -:  278:            : first(__p.first), second(__p.second) {}
+        -:  279:
+        -:  280:#if !defined(_LIBCPP_HAS_NO_DEFAULTED_FUNCTIONS) && _LIBCPP_TRIVIAL_PAIR_COPY_CTOR
+        -:  281:    _LIBCPP_INLINE_VISIBILITY
+        -:  282:    pair(const pair& __p) = default;
+        -:  283:#elif !defined(_LIBCPP_HAS_NO_RVALUE_REFERENCES) || !_LIBCPP_TRIVIAL_PAIR_COPY_CTOR
+        -:  284:    _LIBCPP_INLINE_VISIBILITY
+        -:  285:    pair(const pair& __p)
+        -:  286:        _NOEXCEPT_(is_nothrow_copy_constructible<first_type>::value &&
+        -:  287:                   is_nothrow_copy_constructible<second_type>::value)
+        -:  288:        : first(__p.first),
+        -:  289:          second(__p.second)
+        -:  290:    {
+        -:  291:    }
+        -:  292:#endif
+        -:  293:
+        -:  294:    _LIBCPP_INLINE_VISIBILITY
+        -:  295:    pair& operator=(const pair& __p)
+        -:  296:        _NOEXCEPT_(is_nothrow_copy_assignable<first_type>::value &&
+        -:  297:                   is_nothrow_copy_assignable<second_type>::value)
+        -:  298:    {
+        -:  299:        first = __p.first;
+        -:  300:        second = __p.second;
+        -:  301:        return *this;
+        -:  302:    }
+        -:  303:
+        -:  304:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  305:
+        -:  306:    template <class _U1, class _U2,
+        -:  307:              class = typename enable_if<is_convertible<_U1, first_type>::value &&
+        -:  308:                                         is_convertible<_U2, second_type>::value>::type>
+        -:  309:        _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  310:        pair(_U1&& __u1, _U2&& __u2)
+       51:  311:            : first(_VSTD::forward<_U1>(__u1)),
+       51:  312:              second(_VSTD::forward<_U2>(__u2))
+      102:  313:            {}
+        -:  314:
+        -:  315:    template<class _U1, class _U2>
+        -:  316:        _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  317:        pair(pair<_U1, _U2>&& __p,
+        -:  318:                 typename enable_if<is_convertible<_U1, _T1>::value &&
+        -:  319:                                    is_convertible<_U2, _T2>::value>::type* = 0)
+       51:  320:            : first(_VSTD::forward<_U1>(__p.first)),
+      102:  321:              second(_VSTD::forward<_U2>(__p.second)) {}
+        -:  322:
+        -:  323:#ifndef _LIBCPP_HAS_NO_DEFAULTED_FUNCTIONS
+        -:  324:    _LIBCPP_INLINE_VISIBILITY
+        -:  325:    pair(pair&& __p) = default;
+        -:  326:#else
+        -:  327:    _LIBCPP_INLINE_VISIBILITY
+        -:  328:    pair(pair&& __p) _NOEXCEPT_(is_nothrow_move_constructible<first_type>::value &&
+        -:  329:                                is_nothrow_move_constructible<second_type>::value)
+        -:  330:        : first(_VSTD::forward<first_type>(__p.first)),
+        -:  331:          second(_VSTD::forward<second_type>(__p.second))
+        -:  332:    {
+        -:  333:    }
+        -:  334:#endif
+        -:  335:
+        -:  336:    _LIBCPP_INLINE_VISIBILITY
+        -:  337:    pair&
+        -:  338:    operator=(pair&& __p) _NOEXCEPT_(is_nothrow_move_assignable<first_type>::value &&
+        -:  339:                                     is_nothrow_move_assignable<second_type>::value)
+        -:  340:    {
+        -:  341:        first = _VSTD::forward<first_type>(__p.first);
+        -:  342:        second = _VSTD::forward<second_type>(__p.second);
+        -:  343:        return *this;
+        -:  344:    }
+        -:  345:
+        -:  346:#ifndef _LIBCPP_HAS_NO_VARIADICS
+        -:  347:
+        -:  348:    template<class _Tuple,
+        -:  349:             class = typename enable_if<__tuple_convertible<_Tuple, pair>::value>::type>
+        -:  350:        _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  351:        pair(_Tuple&& __p)
+        -:  352:            : first(_VSTD::forward<typename tuple_element<0,
+        -:  353:                                  typename __make_tuple_types<_Tuple>::type>::type>(_VSTD::get<0>(__p))),
+        -:  354:              second(_VSTD::forward<typename tuple_element<1,
+        -:  355:                                   typename __make_tuple_types<_Tuple>::type>::type>(_VSTD::get<1>(__p)))
+        -:  356:            {}
+        -:  357:
+        -:  358:
+        -:  359:
+        -:  360:    template <class... _Args1, class... _Args2>
+        -:  361:        _LIBCPP_INLINE_VISIBILITY
+        -:  362:        pair(piecewise_construct_t __pc, tuple<_Args1...> __first_args,
+        -:  363:                                    tuple<_Args2...> __second_args)
+        -:  364:            : pair(__pc, __first_args, __second_args,
+        -:  365:                   typename __make_tuple_indices<sizeof...(_Args1)>::type(),
+        -:  366:                   typename __make_tuple_indices<sizeof...(_Args2) >::type())
+        -:  367:            {}
+        -:  368:
+        -:  369:    template <class _Tuple,
+        -:  370:              class = typename enable_if<__tuple_assignable<_Tuple, pair>::value>::type>
+        -:  371:        _LIBCPP_INLINE_VISIBILITY
+        -:  372:        pair&
+        -:  373:        operator=(_Tuple&& __p)
+        -:  374:        {
+        -:  375:            typedef typename __make_tuple_types<_Tuple>::type _TupleRef;
+        -:  376:            typedef typename tuple_element<0, _TupleRef>::type _U0;
+        -:  377:            typedef typename tuple_element<1, _TupleRef>::type _U1;
+        -:  378:            first  = _VSTD::forward<_U0>(_VSTD::get<0>(__p));
+        -:  379:            second = _VSTD::forward<_U1>(_VSTD::get<1>(__p));
+        -:  380:            return *this;
+        -:  381:        }
+        -:  382:
+        -:  383:#endif  // _LIBCPP_HAS_NO_VARIADICS
+        -:  384:
+        -:  385:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  386:    _LIBCPP_INLINE_VISIBILITY
+        -:  387:    void
+        -:  388:    swap(pair& __p) _NOEXCEPT_(__is_nothrow_swappable<first_type>::value &&
+        -:  389:                               __is_nothrow_swappable<second_type>::value)
+        -:  390:    {
+        -:  391:        _VSTD::iter_swap(&first, &__p.first);
+        -:  392:        _VSTD::iter_swap(&second, &__p.second);
+        -:  393:    }
+        -:  394:private:
+        -:  395:
+        -:  396:#ifndef _LIBCPP_HAS_NO_VARIADICS
+        -:  397:    template <class... _Args1, class... _Args2, size_t... _I1, size_t... _I2>
+        -:  398:        _LIBCPP_INLINE_VISIBILITY
+        -:  399:        pair(piecewise_construct_t,
+        -:  400:             tuple<_Args1...>& __first_args, tuple<_Args2...>& __second_args,
+        -:  401:             __tuple_indices<_I1...>, __tuple_indices<_I2...>);
+        -:  402:#endif  // _LIBCPP_HAS_NO_VARIADICS
+        -:  403:};
+        -:  404:
+        -:  405:template <class _T1, class _T2>
+        -:  406:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  407:bool
+        -:  408:operator==(const pair<_T1,_T2>& __x, const pair<_T1,_T2>& __y)
+        -:  409:{
+        -:  410:    return __x.first == __y.first && __x.second == __y.second;
+        -:  411:}
+        -:  412:
+        -:  413:template <class _T1, class _T2>
+        -:  414:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  415:bool
+        -:  416:operator!=(const pair<_T1,_T2>& __x, const pair<_T1,_T2>& __y)
+        -:  417:{
+        -:  418:    return !(__x == __y);
+        -:  419:}
+        -:  420:
+        -:  421:template <class _T1, class _T2>
+        -:  422:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  423:bool
+        -:  424:operator< (const pair<_T1,_T2>& __x, const pair<_T1,_T2>& __y)
+        -:  425:{
+        -:  426:    return __x.first < __y.first || (!(__y.first < __x.first) && __x.second < __y.second);
+        -:  427:}
+        -:  428:
+        -:  429:template <class _T1, class _T2>
+        -:  430:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  431:bool
+        -:  432:operator> (const pair<_T1,_T2>& __x, const pair<_T1,_T2>& __y)
+        -:  433:{
+        -:  434:    return __y < __x;
+        -:  435:}
+        -:  436:
+        -:  437:template <class _T1, class _T2>
+        -:  438:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  439:bool
+        -:  440:operator>=(const pair<_T1,_T2>& __x, const pair<_T1,_T2>& __y)
+        -:  441:{
+        -:  442:    return !(__x < __y);
+        -:  443:}
+        -:  444:
+        -:  445:template <class _T1, class _T2>
+        -:  446:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  447:bool
+        -:  448:operator<=(const pair<_T1,_T2>& __x, const pair<_T1,_T2>& __y)
+        -:  449:{
+        -:  450:    return !(__y < __x);
+        -:  451:}
+        -:  452:
+        -:  453:template <class _T1, class _T2>
+        -:  454:inline _LIBCPP_INLINE_VISIBILITY
+        -:  455:typename enable_if
+        -:  456:<
+        -:  457:    __is_swappable<_T1>::value &&
+        -:  458:    __is_swappable<_T2>::value,
+        -:  459:    void
+        -:  460:>::type
+        -:  461:swap(pair<_T1, _T2>& __x, pair<_T1, _T2>& __y)
+        -:  462:                     _NOEXCEPT_((__is_nothrow_swappable<_T1>::value &&
+        -:  463:                                 __is_nothrow_swappable<_T2>::value))
+        -:  464:{
+        -:  465:    __x.swap(__y);
+        -:  466:}
+        -:  467:
+        -:  468:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  469:
+        -:  470:template <class _Tp> class _LIBCPP_TYPE_VIS_ONLY reference_wrapper;
+        -:  471:
+        -:  472:template <class _Tp>
+        -:  473:struct __make_pair_return_impl
+        -:  474:{
+        -:  475:    typedef _Tp type;
+        -:  476:};
+        -:  477:
+        -:  478:template <class _Tp>
+        -:  479:struct __make_pair_return_impl<reference_wrapper<_Tp>>
+        -:  480:{
+        -:  481:    typedef _Tp& type;
+        -:  482:};
+        -:  483:
+        -:  484:template <class _Tp>
+        -:  485:struct __make_pair_return
+        -:  486:{
+        -:  487:    typedef typename __make_pair_return_impl<typename decay<_Tp>::type>::type type;
+        -:  488:};
+        -:  489:
+        -:  490:template <class _T1, class _T2>
+        -:  491:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  492:pair<typename __make_pair_return<_T1>::type, typename __make_pair_return<_T2>::type>
+        -:  493:make_pair(_T1&& __t1, _T2&& __t2)
+        -:  494:{
+        -:  495:    return pair<typename __make_pair_return<_T1>::type, typename __make_pair_return<_T2>::type>
+        -:  496:               (_VSTD::forward<_T1>(__t1), _VSTD::forward<_T2>(__t2));
+        -:  497:}
+        -:  498:
+        -:  499:#else  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  500:
+        -:  501:template <class _T1, class _T2>
+        -:  502:inline _LIBCPP_INLINE_VISIBILITY
+        -:  503:pair<_T1,_T2>
+        -:  504:make_pair(_T1 __x, _T2 __y)
+        -:  505:{
+        -:  506:    return pair<_T1, _T2>(__x, __y);
+        -:  507:}
+        -:  508:
+        -:  509:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  510:
+        -:  511:template <class _T1, class _T2>
+        -:  512:  class _LIBCPP_TYPE_VIS_ONLY tuple_size<pair<_T1, _T2> >
+        -:  513:    : public integral_constant<size_t, 2> {};
+        -:  514:
+        -:  515:template <class _T1, class _T2>
+        -:  516:class _LIBCPP_TYPE_VIS_ONLY tuple_element<0, pair<_T1, _T2> >
+        -:  517:{
+        -:  518:public:
+        -:  519:    typedef _T1 type;
+        -:  520:};
+        -:  521:
+        -:  522:template <class _T1, class _T2>
+        -:  523:class _LIBCPP_TYPE_VIS_ONLY tuple_element<1, pair<_T1, _T2> >
+        -:  524:{
+        -:  525:public:
+        -:  526:    typedef _T2 type;
+        -:  527:};
+        -:  528:
+        -:  529:template <size_t _Ip> struct __get_pair;
+        -:  530:
+        -:  531:template <>
+        -:  532:struct __get_pair<0>
+        -:  533:{
+        -:  534:    template <class _T1, class _T2>
+        -:  535:    static
+        -:  536:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  537:    _T1&
+        -:  538:    get(pair<_T1, _T2>& __p) _NOEXCEPT {return __p.first;}
+        -:  539:
+        -:  540:    template <class _T1, class _T2>
+        -:  541:    static
+        -:  542:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  543:    const _T1&
+        -:  544:    get(const pair<_T1, _T2>& __p) _NOEXCEPT {return __p.first;}
+        -:  545:
+        -:  546:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  547:
+        -:  548:    template <class _T1, class _T2>
+        -:  549:    static
+        -:  550:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  551:    _T1&&
+        -:  552:    get(pair<_T1, _T2>&& __p) _NOEXCEPT {return _VSTD::forward<_T1>(__p.first);}
+        -:  553:
+        -:  554:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  555:};
+        -:  556:
+        -:  557:template <>
+        -:  558:struct __get_pair<1>
+        -:  559:{
+        -:  560:    template <class _T1, class _T2>
+        -:  561:    static
+        -:  562:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  563:    _T2&
+        -:  564:    get(pair<_T1, _T2>& __p) _NOEXCEPT {return __p.second;}
+        -:  565:
+        -:  566:    template <class _T1, class _T2>
+        -:  567:    static
+        -:  568:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  569:    const _T2&
+        -:  570:    get(const pair<_T1, _T2>& __p) _NOEXCEPT {return __p.second;}
+        -:  571:
+        -:  572:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  573:
+        -:  574:    template <class _T1, class _T2>
+        -:  575:    static
+        -:  576:    _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  577:    _T2&&
+        -:  578:    get(pair<_T1, _T2>&& __p) _NOEXCEPT {return _VSTD::forward<_T2>(__p.second);}
+        -:  579:
+        -:  580:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  581:};
+        -:  582:
+        -:  583:template <size_t _Ip, class _T1, class _T2>
+        -:  584:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  585:typename tuple_element<_Ip, pair<_T1, _T2> >::type&
+        -:  586:get(pair<_T1, _T2>& __p) _NOEXCEPT
+        -:  587:{
+        -:  588:    return __get_pair<_Ip>::get(__p);
+        -:  589:}
+        -:  590:
+        -:  591:template <size_t _Ip, class _T1, class _T2>
+        -:  592:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  593:const typename tuple_element<_Ip, pair<_T1, _T2> >::type&
+        -:  594:get(const pair<_T1, _T2>& __p) _NOEXCEPT
+        -:  595:{
+        -:  596:    return __get_pair<_Ip>::get(__p);
+        -:  597:}
+        -:  598:
+        -:  599:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  600:
+        -:  601:template <size_t _Ip, class _T1, class _T2>
+        -:  602:inline _LIBCPP_INLINE_VISIBILITY _LIBCPP_CONSTEXPR_AFTER_CXX11
+        -:  603:typename tuple_element<_Ip, pair<_T1, _T2> >::type&&
+        -:  604:get(pair<_T1, _T2>&& __p) _NOEXCEPT
+        -:  605:{
+        -:  606:    return __get_pair<_Ip>::get(_VSTD::move(__p));
+        -:  607:}
+        -:  608:
+        -:  609:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  610:
+        -:  611:#if _LIBCPP_STD_VER > 11
+        -:  612:template <class _T1, class _T2>
+        -:  613:inline _LIBCPP_INLINE_VISIBILITY
+        -:  614:constexpr _T1 & get(pair<_T1, _T2>& __p) _NOEXCEPT
+        -:  615:{
+        -:  616:    return __get_pair<0>::get(__p);
+        -:  617:}
+        -:  618:
+        -:  619:template <class _T1, class _T2>
+        -:  620:inline _LIBCPP_INLINE_VISIBILITY
+        -:  621:constexpr _T1 const & get(pair<_T1, _T2> const& __p) _NOEXCEPT
+        -:  622:{
+        -:  623:    return __get_pair<0>::get(__p);
+        -:  624:}
+        -:  625:
+        -:  626:template <class _T1, class _T2>
+        -:  627:inline _LIBCPP_INLINE_VISIBILITY
+        -:  628:constexpr _T1 && get(pair<_T1, _T2>&& __p) _NOEXCEPT
+        -:  629:{
+        -:  630:    return __get_pair<0>::get(_VSTD::move(__p));
+        -:  631:}
+        -:  632:
+        -:  633:template <class _T1, class _T2>
+        -:  634:inline _LIBCPP_INLINE_VISIBILITY
+        -:  635:constexpr _T1 & get(pair<_T2, _T1>& __p) _NOEXCEPT
+        -:  636:{
+        -:  637:    return __get_pair<1>::get(__p);
+        -:  638:}
+        -:  639:
+        -:  640:template <class _T1, class _T2>
+        -:  641:inline _LIBCPP_INLINE_VISIBILITY
+        -:  642:constexpr _T1 const & get(pair<_T2, _T1> const& __p) _NOEXCEPT
+        -:  643:{
+        -:  644:    return __get_pair<1>::get(__p);
+        -:  645:}
+        -:  646:
+        -:  647:template <class _T1, class _T2>
+        -:  648:inline _LIBCPP_INLINE_VISIBILITY
+        -:  649:constexpr _T1 && get(pair<_T2, _T1>&& __p) _NOEXCEPT
+        -:  650:{
+        -:  651:    return __get_pair<1>::get(_VSTD::move(__p));
+        -:  652:}
+        -:  653:
+        -:  654:#endif
+        -:  655:
+        -:  656:#if _LIBCPP_STD_VER > 11
+        -:  657:
+        -:  658:template<class _Tp, _Tp... _Ip>
+        -:  659:struct _LIBCPP_TYPE_VIS_ONLY integer_sequence
+        -:  660:{
+        -:  661:    typedef _Tp value_type;
+        -:  662:    static_assert( is_integral<_Tp>::value,
+        -:  663:                  "std::integer_sequence can only be instantiated with an integral type" );
+        -:  664:    static
+        -:  665:    _LIBCPP_INLINE_VISIBILITY
+        -:  666:    constexpr
+        -:  667:    size_t
+        -:  668:    size() noexcept { return sizeof...(_Ip); }
+        -:  669:};
+        -:  670:
+        -:  671:template<size_t... _Ip>
+        -:  672:    using index_sequence = integer_sequence<size_t, _Ip...>;
+        -:  673:
+        -:  674:namespace __detail {
+        -:  675:
+        -:  676:template<typename _Tp, size_t ..._Extra> struct __repeat;
+        -:  677:template<typename _Tp, _Tp ..._Np, size_t ..._Extra> struct __repeat<integer_sequence<_Tp, _Np...>, _Extra...> {
+        -:  678:  typedef integer_sequence<_Tp,
+        -:  679:                           _Np...,
+        -:  680:                           sizeof...(_Np) + _Np...,
+        -:  681:                           2 * sizeof...(_Np) + _Np...,
+        -:  682:                           3 * sizeof...(_Np) + _Np...,
+        -:  683:                           4 * sizeof...(_Np) + _Np...,
+        -:  684:                           5 * sizeof...(_Np) + _Np...,
+        -:  685:                           6 * sizeof...(_Np) + _Np...,
+        -:  686:                           7 * sizeof...(_Np) + _Np...,
+        -:  687:                           _Extra...> type;
+        -:  688:};
+        -:  689:
+        -:  690:template<size_t _Np> struct __parity;
+        -:  691:template<size_t _Np> struct __make : __parity<_Np % 8>::template __pmake<_Np> {};
+        -:  692:
+        -:  693:template<> struct __make<0> { typedef integer_sequence<size_t> type; };
+        -:  694:template<> struct __make<1> { typedef integer_sequence<size_t, 0> type; };
+        -:  695:template<> struct __make<2> { typedef integer_sequence<size_t, 0, 1> type; };
+        -:  696:template<> struct __make<3> { typedef integer_sequence<size_t, 0, 1, 2> type; };
+        -:  697:template<> struct __make<4> { typedef integer_sequence<size_t, 0, 1, 2, 3> type; };
+        -:  698:template<> struct __make<5> { typedef integer_sequence<size_t, 0, 1, 2, 3, 4> type; };
+        -:  699:template<> struct __make<6> { typedef integer_sequence<size_t, 0, 1, 2, 3, 4, 5> type; };
+        -:  700:template<> struct __make<7> { typedef integer_sequence<size_t, 0, 1, 2, 3, 4, 5, 6> type; };
+        -:  701:
+        -:  702:template<> struct __parity<0> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type> {}; };
+        -:  703:template<> struct __parity<1> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 1> {}; };
+        -:  704:template<> struct __parity<2> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 2, _Np - 1> {}; };
+        -:  705:template<> struct __parity<3> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 3, _Np - 2, _Np - 1> {}; };
+        -:  706:template<> struct __parity<4> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 4, _Np - 3, _Np - 2, _Np - 1> {}; };
+        -:  707:template<> struct __parity<5> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 5, _Np - 4, _Np - 3, _Np - 2, _Np - 1> {}; };
+        -:  708:template<> struct __parity<6> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 6, _Np - 5, _Np - 4, _Np - 3, _Np - 2, _Np - 1> {}; };
+        -:  709:template<> struct __parity<7> { template<size_t _Np> struct __pmake : __repeat<typename __make<_Np / 8>::type, _Np - 7, _Np - 6, _Np - 5, _Np - 4, _Np - 3, _Np - 2, _Np - 1> {}; };
+        -:  710:
+        -:  711:template<typename _Tp, typename _Up> struct __convert {
+        -:  712:  template<typename> struct __result;
+        -:  713:  template<_Tp ..._Np> struct __result<integer_sequence<_Tp, _Np...> > { typedef integer_sequence<_Up, _Np...> type; };
+        -:  714:};
+        -:  715:template<typename _Tp> struct __convert<_Tp, _Tp> { template<typename _Up> struct __result { typedef _Up type; }; };
+        -:  716:
+        -:  717:}
+        -:  718:
+        -:  719:template<typename _Tp, _Tp _Np> using __make_integer_sequence_unchecked =
+        -:  720:  typename __detail::__convert<size_t, _Tp>::template __result<typename __detail::__make<_Np>::type>::type;
+        -:  721:
+        -:  722:template <class _Tp, _Tp _Ep>
+        -:  723:struct __make_integer_sequence
+        -:  724:{
+        -:  725:    static_assert(is_integral<_Tp>::value,
+        -:  726:                  "std::make_integer_sequence can only be instantiated with an integral type" );
+        -:  727:    static_assert(0 <= _Ep, "std::make_integer_sequence input shall not be negative");
+        -:  728:    typedef __make_integer_sequence_unchecked<_Tp, _Ep> type;
+        -:  729:};
+        -:  730:
+        -:  731:template<class _Tp, _Tp _Np>
+        -:  732:    using make_integer_sequence = typename __make_integer_sequence<_Tp, _Np>::type;
+        -:  733:
+        -:  734:template<size_t _Np>
+        -:  735:    using make_index_sequence = make_integer_sequence<size_t, _Np>;
+        -:  736:
+        -:  737:template<class... _Tp>
+        -:  738:    using index_sequence_for = make_index_sequence<sizeof...(_Tp)>;
+        -:  739:  
+        -:  740:#endif  // _LIBCPP_STD_VER > 11
+        -:  741:
+        -:  742:#if _LIBCPP_STD_VER > 11
+        -:  743:template<class _T1, class _T2 = _T1>
+        -:  744:inline _LIBCPP_INLINE_VISIBILITY
+        -:  745:_T1 exchange(_T1& __obj, _T2 && __new_value)
+        -:  746:{
+        -:  747:    _T1 __old_value = _VSTD::move(__obj);
+        -:  748:    __obj = _VSTD::forward<_T2>(__new_value);
+        -:  749:    return __old_value;
+        -:  750:}    
+        -:  751:#endif  // _LIBCPP_STD_VER > 11
+        -:  752:
+        -:  753:_LIBCPP_END_NAMESPACE_STD
+        -:  754:
+        -:  755:#endif  // _LIBCPP_UTILITY

@@ -1,0 +1,640 @@
+        -:    0:Source:/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/__split_buffer
+        -:    0:Graph:LogMgr.gcno
+        -:    0:Data:LogMgr.gcda
+        -:    0:Runs:6
+        -:    0:Programs:1
+        -:    1:// -*- C++ -*-
+        -:    2:#ifndef _LIBCPP_SPLIT_BUFFER
+        -:    3:#define _LIBCPP_SPLIT_BUFFER
+        -:    4:
+        -:    5:#include <__config>
+        -:    6:#include <type_traits>
+        -:    7:#include <algorithm>
+        -:    8:
+        -:    9:#include <__undef_min_max>
+        -:   10:
+        -:   11:#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
+        -:   12:#pragma GCC system_header
+        -:   13:#endif
+        -:   14:
+        -:   15:_LIBCPP_BEGIN_NAMESPACE_STD
+        -:   16:
+        -:   17:template <bool>
+        -:   18:class __split_buffer_common
+        -:   19:{
+        -:   20:protected:
+        -:   21:    void __throw_length_error() const;
+        -:   22:    void __throw_out_of_range() const;
+        -:   23:};
+        -:   24:
+        -:   25:template <class _Tp, class _Allocator = allocator<_Tp> >
+        -:   26:struct __split_buffer
+        -:   27:    : private __split_buffer_common<true>
+        -:   28:{
+        -:   29:private:
+        -:   30:    __split_buffer(const __split_buffer&);
+        -:   31:    __split_buffer& operator=(const __split_buffer&);
+        -:   32:public:
+        -:   33:    typedef _Tp                                             value_type;
+        -:   34:    typedef _Allocator                                      allocator_type;
+        -:   35:    typedef typename remove_reference<allocator_type>::type __alloc_rr;
+        -:   36:    typedef allocator_traits<__alloc_rr>                    __alloc_traits;
+        -:   37:    typedef value_type&                                     reference;
+        -:   38:    typedef const value_type&                               const_reference;
+        -:   39:    typedef typename __alloc_traits::size_type              size_type;
+        -:   40:    typedef typename __alloc_traits::difference_type        difference_type;
+        -:   41:    typedef typename __alloc_traits::pointer                pointer;
+        -:   42:    typedef typename __alloc_traits::const_pointer          const_pointer;
+        -:   43:    typedef pointer                                         iterator;
+        -:   44:    typedef const_pointer                                   const_iterator;
+        -:   45:
+        -:   46:    pointer                                         __first_;
+        -:   47:    pointer                                         __begin_;
+        -:   48:    pointer                                         __end_;
+        -:   49:    __compressed_pair<pointer, allocator_type> __end_cap_;
+        -:   50:
+        -:   51:    typedef typename add_lvalue_reference<allocator_type>::type __alloc_ref;
+        -:   52:    typedef typename add_lvalue_reference<allocator_type>::type __alloc_const_ref;
+        -:   53:
+      166:   54:    _LIBCPP_INLINE_VISIBILITY __alloc_rr&           __alloc() _NOEXCEPT         {return __end_cap_.second();}
+        -:   55:    _LIBCPP_INLINE_VISIBILITY const __alloc_rr&     __alloc() const _NOEXCEPT   {return __end_cap_.second();}
+       96:   56:    _LIBCPP_INLINE_VISIBILITY pointer&              __end_cap() _NOEXCEPT       {return __end_cap_.first();}
+       35:   57:    _LIBCPP_INLINE_VISIBILITY const pointer&        __end_cap() const _NOEXCEPT {return __end_cap_.first();}
+        -:   58:
+        -:   59:    __split_buffer()
+        -:   60:        _NOEXCEPT_(is_nothrow_default_constructible<allocator_type>::value);
+        -:   61:    explicit __split_buffer(__alloc_rr& __a);
+        -:   62:    explicit __split_buffer(const __alloc_rr& __a);
+        -:   63:    __split_buffer(size_type __cap, size_type __start, __alloc_rr& __a);
+        -:   64:    ~__split_buffer();
+        -:   65:
+        -:   66:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:   67:    __split_buffer(__split_buffer&& __c)
+        -:   68:        _NOEXCEPT_(is_nothrow_move_constructible<allocator_type>::value);
+        -:   69:    __split_buffer(__split_buffer&& __c, const __alloc_rr& __a);
+        -:   70:    __split_buffer& operator=(__split_buffer&& __c)
+        -:   71:        _NOEXCEPT_((__alloc_traits::propagate_on_container_move_assignment::value &&
+        -:   72:                is_nothrow_move_assignable<allocator_type>::value) ||
+        -:   73:               !__alloc_traits::propagate_on_container_move_assignment::value);
+        -:   74:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:   75:
+        -:   76:    _LIBCPP_INLINE_VISIBILITY       iterator begin() _NOEXCEPT       {return __begin_;}
+        -:   77:    _LIBCPP_INLINE_VISIBILITY const_iterator begin() const _NOEXCEPT {return __begin_;}
+        -:   78:    _LIBCPP_INLINE_VISIBILITY       iterator end() _NOEXCEPT         {return __end_;}
+        -:   79:    _LIBCPP_INLINE_VISIBILITY const_iterator end() const _NOEXCEPT   {return __end_;}
+        -:   80:
+        -:   81:    _LIBCPP_INLINE_VISIBILITY
+        -:   82:    void clear() _NOEXCEPT
+       48:   83:        {__destruct_at_end(__begin_);}
+        -:   84:    _LIBCPP_INLINE_VISIBILITY size_type size() const {return static_cast<size_type>(__end_ - __begin_);}
+        -:   85:    _LIBCPP_INLINE_VISIBILITY bool empty()     const {return __end_ == __begin_;}
+       35:   86:    _LIBCPP_INLINE_VISIBILITY size_type capacity() const {return static_cast<size_type>(__end_cap() - __first_);}
+        -:   87:    _LIBCPP_INLINE_VISIBILITY size_type __front_spare() const {return static_cast<size_type>(__begin_ - __first_);}
+        -:   88:    _LIBCPP_INLINE_VISIBILITY size_type __back_spare() const {return static_cast<size_type>(__end_cap() - __end_);}
+        -:   89:
+        -:   90:    _LIBCPP_INLINE_VISIBILITY       reference front()       {return *__begin_;}
+        -:   91:    _LIBCPP_INLINE_VISIBILITY const_reference front() const {return *__begin_;}
+        -:   92:    _LIBCPP_INLINE_VISIBILITY       reference back()        {return *(__end_ - 1);}
+        -:   93:    _LIBCPP_INLINE_VISIBILITY const_reference back() const  {return *(__end_ - 1);}
+        -:   94:
+        -:   95:    void reserve(size_type __n);
+        -:   96:    void shrink_to_fit() _NOEXCEPT;
+        -:   97:    void push_front(const_reference __x);
+        -:   98:    _LIBCPP_INLINE_VISIBILITY void push_back(const_reference __x);
+        -:   99:#if !defined(_LIBCPP_HAS_NO_RVALUE_REFERENCES)
+        -:  100:    void push_front(value_type&& __x);
+        -:  101:    void push_back(value_type&& __x);
+        -:  102:#if !defined(_LIBCPP_HAS_NO_VARIADICS)
+        -:  103:    template <class... _Args>
+        -:  104:        void emplace_back(_Args&&... __args);
+        -:  105:#endif  // !defined(_LIBCPP_HAS_NO_VARIADICS)
+        -:  106:#endif  // !defined(_LIBCPP_HAS_NO_RVALUE_REFERENCES)
+        -:  107:
+        -:  108:    _LIBCPP_INLINE_VISIBILITY void pop_front() {__destruct_at_begin(__begin_+1);}
+        -:  109:    _LIBCPP_INLINE_VISIBILITY void pop_back() {__destruct_at_end(__end_-1);}
+        -:  110:
+        -:  111:    void __construct_at_end(size_type __n);
+        -:  112:    void __construct_at_end(size_type __n, const_reference __x);
+        -:  113:    template <class _InputIter>
+        -:  114:        typename enable_if
+        -:  115:        <
+        -:  116:            __is_input_iterator<_InputIter>::value &&
+        -:  117:           !__is_forward_iterator<_InputIter>::value,
+        -:  118:            void
+        -:  119:        >::type
+        -:  120:        __construct_at_end(_InputIter __first, _InputIter __last);
+        -:  121:    template <class _ForwardIterator>
+        -:  122:        typename enable_if
+        -:  123:        <
+        -:  124:            __is_forward_iterator<_ForwardIterator>::value,
+        -:  125:            void
+        -:  126:        >::type
+        -:  127:        __construct_at_end(_ForwardIterator __first, _ForwardIterator __last);
+        -:  128:
+        -:  129:    _LIBCPP_INLINE_VISIBILITY void __destruct_at_begin(pointer __new_begin)
+        -:  130:        {__destruct_at_begin(__new_begin, is_trivially_destructible<value_type>());}
+        -:  131:        void __destruct_at_begin(pointer __new_begin, false_type);
+        -:  132:        void __destruct_at_begin(pointer __new_begin, true_type);
+        -:  133:
+        -:  134:    _LIBCPP_INLINE_VISIBILITY
+        -:  135:    void __destruct_at_end(pointer __new_last) _NOEXCEPT
+       48:  136:        {__destruct_at_end(__new_last, false_type());}
+        -:  137:    _LIBCPP_INLINE_VISIBILITY
+        -:  138:        void __destruct_at_end(pointer __new_last, false_type) _NOEXCEPT;
+        -:  139:    _LIBCPP_INLINE_VISIBILITY
+        -:  140:        void __destruct_at_end(pointer __new_last, true_type) _NOEXCEPT;
+        -:  141:
+        -:  142:    void swap(__split_buffer& __x)
+        -:  143:        _NOEXCEPT_(!__alloc_traits::propagate_on_container_swap::value||
+        -:  144:                   __is_nothrow_swappable<__alloc_rr>::value);
+        -:  145:
+        -:  146:    bool __invariants() const;
+        -:  147:
+        -:  148:private:
+        -:  149:    _LIBCPP_INLINE_VISIBILITY
+        -:  150:    void __move_assign_alloc(__split_buffer& __c, true_type)
+        -:  151:        _NOEXCEPT_(is_nothrow_move_assignable<allocator_type>::value)
+        -:  152:        {
+        -:  153:            __alloc() = _VSTD::move(__c.__alloc());
+        -:  154:        }
+        -:  155:
+        -:  156:    _LIBCPP_INLINE_VISIBILITY
+        -:  157:    void __move_assign_alloc(__split_buffer&, false_type) _NOEXCEPT
+        -:  158:        {}
+        -:  159:};
+        -:  160:
+        -:  161:template <class _Tp, class _Allocator>
+        -:  162:bool
+        -:  163:__split_buffer<_Tp, _Allocator>::__invariants() const
+        -:  164:{
+        -:  165:    if (__first_ == nullptr)
+        -:  166:    {
+        -:  167:        if (__begin_ != nullptr)
+        -:  168:            return false;
+        -:  169:        if (__end_ != nullptr)
+        -:  170:            return false;
+        -:  171:        if (__end_cap() != nullptr)
+        -:  172:            return false;
+        -:  173:    }
+        -:  174:    else
+        -:  175:    {
+        -:  176:        if (__begin_ < __first_)
+        -:  177:            return false;
+        -:  178:        if (__end_ < __begin_)
+        -:  179:            return false;
+        -:  180:        if (__end_cap() < __end_)
+        -:  181:            return false;
+        -:  182:    }
+        -:  183:    return true;
+        -:  184:}
+        -:  185:
+        -:  186://  Default constructs __n objects starting at __end_
+        -:  187://  throws if construction throws
+        -:  188://  Precondition:  __n > 0
+        -:  189://  Precondition:  size() + __n <= capacity()
+        -:  190://  Postcondition:  size() == size() + __n
+        -:  191:template <class _Tp, class _Allocator>
+        -:  192:void
+        -:  193:__split_buffer<_Tp, _Allocator>::__construct_at_end(size_type __n)
+        -:  194:{
+        -:  195:    __alloc_rr& __a = this->__alloc();
+        -:  196:    do
+        -:  197:    {
+        -:  198:        __alloc_traits::construct(__a, _VSTD::__to_raw_pointer(this->__end_));
+        -:  199:        ++this->__end_;
+        -:  200:        --__n;
+        -:  201:    } while (__n > 0);
+        -:  202:}
+        -:  203:
+        -:  204://  Copy constructs __n objects starting at __end_ from __x
+        -:  205://  throws if construction throws
+        -:  206://  Precondition:  __n > 0
+        -:  207://  Precondition:  size() + __n <= capacity()
+        -:  208://  Postcondition:  size() == old size() + __n
+        -:  209://  Postcondition:  [i] == __x for all i in [size() - __n, __n)
+        -:  210:template <class _Tp, class _Allocator>
+        -:  211:void
+        -:  212:__split_buffer<_Tp, _Allocator>::__construct_at_end(size_type __n, const_reference __x)
+        -:  213:{
+        -:  214:    __alloc_rr& __a = this->__alloc();
+        -:  215:    do
+        -:  216:    {
+        -:  217:        __alloc_traits::construct(__a, _VSTD::__to_raw_pointer(this->__end_), __x);
+        -:  218:        ++this->__end_;
+        -:  219:        --__n;
+        -:  220:    } while (__n > 0);
+        -:  221:}
+        -:  222:
+        -:  223:template <class _Tp, class _Allocator>
+        -:  224:template <class _InputIter>
+        -:  225:typename enable_if
+        -:  226:<
+        -:  227:     __is_input_iterator<_InputIter>::value &&
+        -:  228:    !__is_forward_iterator<_InputIter>::value,
+        -:  229:    void
+        -:  230:>::type
+        -:  231:__split_buffer<_Tp, _Allocator>::__construct_at_end(_InputIter __first, _InputIter __last)
+        -:  232:{
+        -:  233:    __alloc_rr& __a = this->__alloc();
+        -:  234:    for (; __first != __last; ++__first)
+        -:  235:    {
+        -:  236:        if (__end_ == __end_cap())
+        -:  237:        {
+        -:  238:            size_type __old_cap = __end_cap() - __first_;
+        -:  239:            size_type __new_cap = _VSTD::max<size_type>(2 * __old_cap, 8);
+        -:  240:            __split_buffer __buf(__new_cap, 0, __a);
+        -:  241:            for (pointer __p = __begin_; __p != __end_; ++__p, ++__buf.__end_)
+        -:  242:                __alloc_traits::construct(__buf.__alloc(),
+        -:  243:                        _VSTD::__to_raw_pointer(__buf.__end_), _VSTD::move(*__p));
+        -:  244:            swap(__buf);
+        -:  245:        }
+        -:  246:        __alloc_traits::construct(__a, _VSTD::__to_raw_pointer(this->__end_), *__first);
+        -:  247:        ++this->__end_;
+        -:  248:    }
+        -:  249:}
+        -:  250:
+        -:  251:template <class _Tp, class _Allocator>
+        -:  252:template <class _ForwardIterator>
+        -:  253:typename enable_if
+        -:  254:<
+        -:  255:    __is_forward_iterator<_ForwardIterator>::value,
+        -:  256:    void
+        -:  257:>::type
+        -:  258:__split_buffer<_Tp, _Allocator>::__construct_at_end(_ForwardIterator __first, _ForwardIterator __last)
+        -:  259:{
+        -:  260:    __alloc_rr& __a = this->__alloc();
+        -:  261:    for (; __first != __last; ++__first)
+        -:  262:    {
+        -:  263:        __alloc_traits::construct(__a, _VSTD::__to_raw_pointer(this->__end_), *__first);
+        -:  264:        ++this->__end_;
+        -:  265:    }
+        -:  266:}
+        -:  267:
+        -:  268:template <class _Tp, class _Allocator>
+        -:  269:inline _LIBCPP_INLINE_VISIBILITY
+        -:  270:void
+        -:  271:__split_buffer<_Tp, _Allocator>::__destruct_at_begin(pointer __new_begin, false_type)
+        -:  272:{
+        -:  273:    while (__begin_ != __new_begin)
+        -:  274:        __alloc_traits::destroy(__alloc(), __to_raw_pointer(__begin_++));
+        -:  275:}
+        -:  276:
+        -:  277:template <class _Tp, class _Allocator>
+        -:  278:inline _LIBCPP_INLINE_VISIBILITY
+        -:  279:void
+        -:  280:__split_buffer<_Tp, _Allocator>::__destruct_at_begin(pointer __new_begin, true_type)
+        -:  281:{
+        -:  282:    __begin_ = __new_begin;
+        -:  283:}
+        -:  284:
+        -:  285:template <class _Tp, class _Allocator>
+        -:  286:inline _LIBCPP_INLINE_VISIBILITY
+        -:  287:void
+        -:  288:__split_buffer<_Tp, _Allocator>::__destruct_at_end(pointer __new_last, false_type) _NOEXCEPT
+        -:  289:{
+      262:  290:    while (__new_last != __end_)
+       83:  291:        __alloc_traits::destroy(__alloc(), __to_raw_pointer(--__end_));
+       48:  292:}
+        -:  293:
+        -:  294:template <class _Tp, class _Allocator>
+        -:  295:inline _LIBCPP_INLINE_VISIBILITY
+        -:  296:void
+        -:  297:__split_buffer<_Tp, _Allocator>::__destruct_at_end(pointer __new_last, true_type) _NOEXCEPT
+        -:  298:{
+        -:  299:    __end_ = __new_last;
+        -:  300:}
+        -:  301:
+        -:  302:template <class _Tp, class _Allocator>
+        -:  303:__split_buffer<_Tp, _Allocator>::__split_buffer(size_type __cap, size_type __start, __alloc_rr& __a)
+       48:  304:    : __end_cap_(nullptr, __a)
+       96:  305:{
+      144:  306:    __first_ = __cap != 0 ? __alloc_traits::allocate(__alloc(), __cap) : nullptr;
+       48:  307:    __begin_ = __end_ = __first_ + __start;
+       48:  308:    __end_cap() = __first_ + __cap;
+       96:  309:}
+        -:  310:
+        -:  311:template <class _Tp, class _Allocator>
+        -:  312:inline _LIBCPP_INLINE_VISIBILITY
+        -:  313:__split_buffer<_Tp, _Allocator>::__split_buffer()
+        -:  314:    _NOEXCEPT_(is_nothrow_default_constructible<allocator_type>::value)
+        -:  315:    : __first_(nullptr), __begin_(nullptr), __end_(nullptr), __end_cap_(nullptr)
+        -:  316:{
+        -:  317:}
+        -:  318:
+        -:  319:template <class _Tp, class _Allocator>
+        -:  320:inline _LIBCPP_INLINE_VISIBILITY
+        -:  321:__split_buffer<_Tp, _Allocator>::__split_buffer(__alloc_rr& __a)
+        -:  322:    : __first_(nullptr), __begin_(nullptr), __end_(nullptr), __end_cap_(nullptr, __a)
+        -:  323:{
+        -:  324:}
+        -:  325:
+        -:  326:template <class _Tp, class _Allocator>
+        -:  327:inline _LIBCPP_INLINE_VISIBILITY
+        -:  328:__split_buffer<_Tp, _Allocator>::__split_buffer(const __alloc_rr& __a)
+        -:  329:    : __first_(nullptr), __begin_(nullptr), __end_(nullptr), __end_cap_(nullptr, __a)
+        -:  330:{
+        -:  331:}
+        -:  332:
+        -:  333:template <class _Tp, class _Allocator>
+        -:  334:__split_buffer<_Tp, _Allocator>::~__split_buffer()
+       48:  335:{
+       48:  336:    clear();
+       48:  337:    if (__first_)
+       70:  338:        __alloc_traits::deallocate(__alloc(), __first_, capacity());
+       96:  339:}
+        -:  340:
+        -:  341:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  342:
+        -:  343:template <class _Tp, class _Allocator>
+        -:  344:__split_buffer<_Tp, _Allocator>::__split_buffer(__split_buffer&& __c)
+        -:  345:    _NOEXCEPT_(is_nothrow_move_constructible<allocator_type>::value)
+        -:  346:    : __first_(_VSTD::move(__c.__first_)),
+        -:  347:      __begin_(_VSTD::move(__c.__begin_)),
+        -:  348:      __end_(_VSTD::move(__c.__end_)),
+        -:  349:      __end_cap_(_VSTD::move(__c.__end_cap_))
+        -:  350:{
+        -:  351:    __c.__first_ = nullptr;
+        -:  352:    __c.__begin_ = nullptr;
+        -:  353:    __c.__end_ = nullptr;
+        -:  354:    __c.__end_cap() = nullptr;
+        -:  355:}
+        -:  356:
+        -:  357:template <class _Tp, class _Allocator>
+        -:  358:__split_buffer<_Tp, _Allocator>::__split_buffer(__split_buffer&& __c, const __alloc_rr& __a)
+        -:  359:    : __end_cap_(__a)
+        -:  360:{
+        -:  361:    if (__a == __c.__alloc())
+        -:  362:    {
+        -:  363:        __first_ = __c.__first_;
+        -:  364:        __begin_ = __c.__begin_;
+        -:  365:        __end_ = __c.__end_;
+        -:  366:        __end_cap() = __c.__end_cap();
+        -:  367:        __c.__first_ = nullptr;
+        -:  368:        __c.__begin_ = nullptr;
+        -:  369:        __c.__end_ = nullptr;
+        -:  370:        __c.__end_cap() = nullptr;
+        -:  371:    }
+        -:  372:    else
+        -:  373:    {
+        -:  374:        size_type __cap = __c.size();
+        -:  375:        __first_ = __alloc_traits::allocate(__alloc(), __cap);
+        -:  376:        __begin_ = __end_ = __first_;
+        -:  377:        __end_cap() = __first_ + __cap;
+        -:  378:        typedef move_iterator<iterator> _Ip;
+        -:  379:        __construct_at_end(_Ip(__c.begin()), _Ip(__c.end()));
+        -:  380:    }
+        -:  381:}
+        -:  382:
+        -:  383:template <class _Tp, class _Allocator>
+        -:  384:__split_buffer<_Tp, _Allocator>&
+        -:  385:__split_buffer<_Tp, _Allocator>::operator=(__split_buffer&& __c)
+        -:  386:    _NOEXCEPT_((__alloc_traits::propagate_on_container_move_assignment::value &&
+        -:  387:                is_nothrow_move_assignable<allocator_type>::value) ||
+        -:  388:               !__alloc_traits::propagate_on_container_move_assignment::value)
+        -:  389:{
+        -:  390:    clear();
+        -:  391:    shrink_to_fit();
+        -:  392:    __first_ = __c.__first_;
+        -:  393:    __begin_ = __c.__begin_;
+        -:  394:    __end_ = __c.__end_;
+        -:  395:    __end_cap() = __c.__end_cap();
+        -:  396:    __move_assign_alloc(__c,
+        -:  397:        integral_constant<bool,
+        -:  398:                          __alloc_traits::propagate_on_container_move_assignment::value>());
+        -:  399:    __c.__first_ = __c.__begin_ = __c.__end_ = __c.__end_cap() = nullptr;
+        -:  400:    return *this;
+        -:  401:}
+        -:  402:
+        -:  403:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  404:
+        -:  405:template <class _Tp, class _Allocator>
+        -:  406:void
+        -:  407:__split_buffer<_Tp, _Allocator>::swap(__split_buffer& __x)
+        -:  408:        _NOEXCEPT_(!__alloc_traits::propagate_on_container_swap::value||
+        -:  409:                   __is_nothrow_swappable<__alloc_rr>::value)
+        -:  410:{
+        -:  411:    _VSTD::swap(__first_, __x.__first_);
+        -:  412:    _VSTD::swap(__begin_, __x.__begin_);
+        -:  413:    _VSTD::swap(__end_, __x.__end_);
+        -:  414:    _VSTD::swap(__end_cap(), __x.__end_cap());
+        -:  415:    __swap_allocator(__alloc(), __x.__alloc());
+        -:  416:}
+        -:  417:
+        -:  418:template <class _Tp, class _Allocator>
+        -:  419:void
+        -:  420:__split_buffer<_Tp, _Allocator>::reserve(size_type __n)
+        -:  421:{
+        -:  422:    if (__n < capacity())
+        -:  423:    {
+        -:  424:        __split_buffer<value_type, __alloc_rr&> __t(__n, 0, __alloc());
+        -:  425:        __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  426:                               move_iterator<pointer>(__end_));
+        -:  427:        _VSTD::swap(__first_, __t.__first_);
+        -:  428:        _VSTD::swap(__begin_, __t.__begin_);
+        -:  429:        _VSTD::swap(__end_, __t.__end_);
+        -:  430:        _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  431:    }
+        -:  432:}
+        -:  433:
+        -:  434:template <class _Tp, class _Allocator>
+        -:  435:void
+        -:  436:__split_buffer<_Tp, _Allocator>::shrink_to_fit() _NOEXCEPT
+        -:  437:{
+        -:  438:    if (capacity() > size())
+        -:  439:    {
+        -:  440:#ifndef _LIBCPP_NO_EXCEPTIONS
+        -:  441:        try
+        -:  442:        {
+        -:  443:#endif  // _LIBCPP_NO_EXCEPTIONS
+        -:  444:            __split_buffer<value_type, __alloc_rr&> __t(size(), 0, __alloc());
+        -:  445:            __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  446:                                   move_iterator<pointer>(__end_));
+        -:  447:            __t.__end_ = __t.__begin_ + (__end_ - __begin_);
+        -:  448:            _VSTD::swap(__first_, __t.__first_);
+        -:  449:            _VSTD::swap(__begin_, __t.__begin_);
+        -:  450:            _VSTD::swap(__end_, __t.__end_);
+        -:  451:            _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  452:#ifndef _LIBCPP_NO_EXCEPTIONS
+        -:  453:        }
+        -:  454:        catch (...)
+        -:  455:        {
+        -:  456:        }
+        -:  457:#endif  // _LIBCPP_NO_EXCEPTIONS
+        -:  458:    }
+        -:  459:}
+        -:  460:
+        -:  461:template <class _Tp, class _Allocator>
+        -:  462:void
+        -:  463:__split_buffer<_Tp, _Allocator>::push_front(const_reference __x)
+        -:  464:{
+        -:  465:    if (__begin_ == __first_)
+        -:  466:    {
+        -:  467:        if (__end_ < __end_cap())
+        -:  468:        {
+        -:  469:            difference_type __d = __end_cap() - __end_;
+        -:  470:            __d = (__d + 1) / 2;
+        -:  471:            __begin_ = _VSTD::move_backward(__begin_, __end_, __end_ + __d);
+        -:  472:            __end_ += __d;
+        -:  473:        }
+        -:  474:        else
+        -:  475:        {
+        -:  476:            size_type __c = max<size_type>(2 * static_cast<size_t>(__end_cap() - __first_), 1);
+        -:  477:            __split_buffer<value_type, __alloc_rr&> __t(__c, (__c + 3) / 4, __alloc());
+        -:  478:            __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  479:                                   move_iterator<pointer>(__end_));
+        -:  480:            _VSTD::swap(__first_, __t.__first_);
+        -:  481:            _VSTD::swap(__begin_, __t.__begin_);
+        -:  482:            _VSTD::swap(__end_, __t.__end_);
+        -:  483:            _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  484:        }
+        -:  485:    }
+        -:  486:    __alloc_traits::construct(__alloc(), _VSTD::__to_raw_pointer(__begin_-1), __x);
+        -:  487:    --__begin_;
+        -:  488:}
+        -:  489:
+        -:  490:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  491:
+        -:  492:template <class _Tp, class _Allocator>
+        -:  493:void
+        -:  494:__split_buffer<_Tp, _Allocator>::push_front(value_type&& __x)
+        -:  495:{
+        -:  496:    if (__begin_ == __first_)
+        -:  497:    {
+        -:  498:        if (__end_ < __end_cap())
+        -:  499:        {
+        -:  500:            difference_type __d = __end_cap() - __end_;
+        -:  501:            __d = (__d + 1) / 2;
+        -:  502:            __begin_ = _VSTD::move_backward(__begin_, __end_, __end_ + __d);
+        -:  503:            __end_ += __d;
+        -:  504:        }
+        -:  505:        else
+        -:  506:        {
+        -:  507:            size_type __c = max<size_type>(2 * static_cast<size_t>(__end_cap() - __first_), 1);
+        -:  508:            __split_buffer<value_type, __alloc_rr&> __t(__c, (__c + 3) / 4, __alloc());
+        -:  509:            __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  510:                                   move_iterator<pointer>(__end_));
+        -:  511:            _VSTD::swap(__first_, __t.__first_);
+        -:  512:            _VSTD::swap(__begin_, __t.__begin_);
+        -:  513:            _VSTD::swap(__end_, __t.__end_);
+        -:  514:            _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  515:        }
+        -:  516:    }
+        -:  517:    __alloc_traits::construct(__alloc(), _VSTD::__to_raw_pointer(__begin_-1),
+        -:  518:            _VSTD::move(__x));
+        -:  519:    --__begin_;
+        -:  520:}
+        -:  521:
+        -:  522:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  523:
+        -:  524:template <class _Tp, class _Allocator>
+        -:  525:inline _LIBCPP_INLINE_VISIBILITY
+        -:  526:void
+        -:  527:__split_buffer<_Tp, _Allocator>::push_back(const_reference __x)
+        -:  528:{
+        -:  529:    if (__end_ == __end_cap())
+        -:  530:    {
+        -:  531:        if (__begin_ > __first_)
+        -:  532:        {
+        -:  533:            difference_type __d = __begin_ - __first_;
+        -:  534:            __d = (__d + 1) / 2;
+        -:  535:            __end_ = _VSTD::move(__begin_, __end_, __begin_ - __d);
+        -:  536:            __begin_ -= __d;
+        -:  537:        }
+        -:  538:        else
+        -:  539:        {
+        -:  540:            size_type __c = max<size_type>(2 * static_cast<size_t>(__end_cap() - __first_), 1);
+        -:  541:            __split_buffer<value_type, __alloc_rr&> __t(__c, __c / 4, __alloc());
+        -:  542:            __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  543:                                   move_iterator<pointer>(__end_));
+        -:  544:            _VSTD::swap(__first_, __t.__first_);
+        -:  545:            _VSTD::swap(__begin_, __t.__begin_);
+        -:  546:            _VSTD::swap(__end_, __t.__end_);
+        -:  547:            _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  548:        }
+        -:  549:    }
+        -:  550:    __alloc_traits::construct(__alloc(), _VSTD::__to_raw_pointer(__end_), __x);
+        -:  551:    ++__end_;
+        -:  552:}
+        -:  553:
+        -:  554:#ifndef _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  555:
+        -:  556:template <class _Tp, class _Allocator>
+        -:  557:void
+        -:  558:__split_buffer<_Tp, _Allocator>::push_back(value_type&& __x)
+        -:  559:{
+        -:  560:    if (__end_ == __end_cap())
+        -:  561:    {
+        -:  562:        if (__begin_ > __first_)
+        -:  563:        {
+        -:  564:            difference_type __d = __begin_ - __first_;
+        -:  565:            __d = (__d + 1) / 2;
+        -:  566:            __end_ = _VSTD::move(__begin_, __end_, __begin_ - __d);
+        -:  567:            __begin_ -= __d;
+        -:  568:        }
+        -:  569:        else
+        -:  570:        {
+        -:  571:            size_type __c = max<size_type>(2 * static_cast<size_t>(__end_cap() - __first_), 1);
+        -:  572:            __split_buffer<value_type, __alloc_rr&> __t(__c, __c / 4, __alloc());
+        -:  573:            __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  574:                                   move_iterator<pointer>(__end_));
+        -:  575:            _VSTD::swap(__first_, __t.__first_);
+        -:  576:            _VSTD::swap(__begin_, __t.__begin_);
+        -:  577:            _VSTD::swap(__end_, __t.__end_);
+        -:  578:            _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  579:        }
+        -:  580:    }
+        -:  581:    __alloc_traits::construct(__alloc(), _VSTD::__to_raw_pointer(__end_),
+        -:  582:            _VSTD::move(__x));
+        -:  583:    ++__end_;
+        -:  584:}
+        -:  585:
+        -:  586:#ifndef _LIBCPP_HAS_NO_VARIADICS
+        -:  587:
+        -:  588:template <class _Tp, class _Allocator>
+        -:  589:template <class... _Args>
+        -:  590:void
+        -:  591:__split_buffer<_Tp, _Allocator>::emplace_back(_Args&&... __args)
+        -:  592:{
+        -:  593:    if (__end_ == __end_cap())
+        -:  594:    {
+        -:  595:        if (__begin_ > __first_)
+        -:  596:        {
+        -:  597:            difference_type __d = __begin_ - __first_;
+        -:  598:            __d = (__d + 1) / 2;
+        -:  599:            __end_ = _VSTD::move(__begin_, __end_, __begin_ - __d);
+        -:  600:            __begin_ -= __d;
+        -:  601:        }
+        -:  602:        else
+        -:  603:        {
+        -:  604:            size_type __c = max<size_type>(2 * static_cast<size_t>(__end_cap() - __first_), 1);
+        -:  605:            __split_buffer<value_type, __alloc_rr&> __t(__c, __c / 4, __alloc());
+        -:  606:            __t.__construct_at_end(move_iterator<pointer>(__begin_),
+        -:  607:                                   move_iterator<pointer>(__end_));
+        -:  608:            _VSTD::swap(__first_, __t.__first_);
+        -:  609:            _VSTD::swap(__begin_, __t.__begin_);
+        -:  610:            _VSTD::swap(__end_, __t.__end_);
+        -:  611:            _VSTD::swap(__end_cap(), __t.__end_cap());
+        -:  612:        }
+        -:  613:    }
+        -:  614:    __alloc_traits::construct(__alloc(), _VSTD::__to_raw_pointer(__end_),
+        -:  615:                              _VSTD::forward<_Args>(__args)...);
+        -:  616:    ++__end_;
+        -:  617:}
+        -:  618:
+        -:  619:#endif  // _LIBCPP_HAS_NO_VARIADICS
+        -:  620:
+        -:  621:#endif  // _LIBCPP_HAS_NO_RVALUE_REFERENCES
+        -:  622:
+        -:  623:template <class _Tp, class _Allocator>
+        -:  624:inline _LIBCPP_INLINE_VISIBILITY
+        -:  625:void
+        -:  626:swap(__split_buffer<_Tp, _Allocator>& __x, __split_buffer<_Tp, _Allocator>& __y)
+        -:  627:        _NOEXCEPT_(_NOEXCEPT_(__x.swap(__y)))
+        -:  628:{
+        -:  629:    __x.swap(__y);
+        -:  630:}
+        -:  631:
+        -:  632:
+        -:  633:_LIBCPP_END_NAMESPACE_STD
+        -:  634:
+        -:  635:#endif  // _LIBCPP_SPLIT_BUFFER
